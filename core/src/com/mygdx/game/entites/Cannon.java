@@ -5,17 +5,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.classes.SoundItem;
+import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.util.Constants;
-
-import java.awt.*;
 
 public class Cannon {
 
     private Texture texture;
+    private GameScreen gameScreen;
     private Vector2 position;
     private SoundItem soundItem;
     private ShapeRenderer renderer ;
@@ -24,42 +25,43 @@ public class Cannon {
     ScreenViewport hudViewport;
 
     // Add BitmapFont
-    BitmapFont font;
+    BitmapFont font12;
 
     // переменные управления
     private int number;
 
-    public Cannon (Vector2 position, SoundItem soundItem) {
+    public Cannon (GameScreen gameScreen, Vector2 position, SoundItem soundItem) {
         this.position = position;
         this.soundItem = soundItem;
-        renderer       = new ShapeRenderer();
+        this.gameScreen = gameScreen;
+        texture        = new Texture("asteroid64.png");
 
-        // Initialize the HUD viewport
-//        hudViewport = new ScreenViewport();
+        // шрифт для подписей
+        generateFont12();
+    }
 
-        //  Initialize the BitmapFont
-        //font = new BitmapFont();
-
-        //  Give the font a linear TextureFilter
-        //font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
+    private void generateFont12() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 12;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        parameter.shadowOffsetX = 3;
+        parameter.shadowOffsetY = -3;
+        parameter.shadowColor = Color.BLACK;
+        font12 = generator.generateFont(parameter);
     }
 
     public void  render(Batch batch, float dt) {
 
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
-        renderer.setColor(Color.GREEN);
-        renderer.circle(position.x,position.y,30);
-        renderer.end();
+        float width = Gdx.graphics.getWidth()/gameScreen.getNumSounds();
+        float height = width;
 
-//        hudViewport.apply();
+        batch.draw(texture,position.x,position.y,width,height);
 
-        // Set the SpriteBatch's projection matrix
-//        batch.setProjectionMatrix(hudViewport.getCamera().combined);
-
-        // Draw the name
-//        font.setColor(Color.CYAN);
-
-//        font.draw(batch,  soundItem.getName(), position.x , position.y + 100);
+        if (font12!= null) {
+            font12.draw(batch, soundItem.getName(), position.x, position.y);
+        }
 
     }
 }

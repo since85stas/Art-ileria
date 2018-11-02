@@ -17,6 +17,7 @@ public class Constants {
 
     // константы для игры
 
-    //константы для
-
+    //константы для текстур пушек
+    public static final float CANNON_WIDTH = 64;
+    public static final float CANNON_HEIGHT = 64;
 }

@@ -89,23 +89,11 @@ public class GameScreen implements Screen {
         //  Initialize the BitmapFont
         font = new BitmapFont();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 48;
-        parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 2;
-        parameter.shadowOffsetX = 3;
-        parameter.shadowOffsetY = -3;
-        parameter.shadowColor = Color.BLACK;
-        font48 = generator.generateFont(parameter);
-
-        //  Give the font a linear TextureFilter
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
 
 
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
-            cannons[i] = new Cannon(cannonsCoord[i],sounds[i]);
+            cannons[i] = new Cannon(this,cannonsCoord[i],sounds[i]);
         }
     }
 
@@ -122,17 +110,12 @@ public class GameScreen implements Screen {
         float frameTime = Math.min(delta, 0.25f);
         accumulator += frameTime;
 
-        // Set the SpriteBatch's projection matrix
-        //batch.setProjectionMatrix(hudViewport.getCamera().combined);
-
-//        batch.setProjectionMatrix();
-
         batch.begin();
 
-//        for (int i = 0; i < numSounds; i++) {
-//            cannons[i].render(batch,delta);
-//        }
-        cannons[0].render(batch,delta);
+        for (int i = 0; i < numSounds; i++) {
+            cannons[i].render(batch,delta);
+        }
+//        cannons[0].render(batch,delta);
 
 
         // Draw the number of player deaths in the top left
@@ -141,7 +124,7 @@ public class GameScreen implements Screen {
         float fps = 1 / delta;
         Gdx.app.log(TAG,"fps =" + fps);
 
-        font48.draw(batch,  "Text", width/2 , height/2);
+//        font48.draw(batch,  "Text", width/2 , height/2);
 
         batch.end();
     }
@@ -184,5 +167,9 @@ public class GameScreen implements Screen {
 
         // Set font scale to min(width, height) / reference screen size
         //font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
+    }
+
+    public int getNumSounds() {
+        return numSounds;
     }
 }
