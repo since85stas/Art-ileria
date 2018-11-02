@@ -3,9 +3,11 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
@@ -45,6 +47,7 @@ public class GameScreen implements Screen {
 
     // Add BitmapFont
     BitmapFont font;
+    BitmapFont font48;
 
 	public GameScreen( SpriteBatch batch, int numSounds, float timeOfGame, float timeOfStep, int numSteps){
 		this.batch      = batch ;
@@ -80,15 +83,25 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-
         // Initialize the HUD viewport
         hudViewport = new ScreenViewport();
 
         //  Initialize the BitmapFont
         font = new BitmapFont();
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 48;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        parameter.shadowOffsetX = 3;
+        parameter.shadowOffsetY = -3;
+        parameter.shadowColor = Color.BLACK;
+        font48 = generator.generateFont(parameter);
+
         //  Give the font a linear TextureFilter
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
+
 
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
@@ -101,27 +114,34 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         // fixed time step
         // max frame time to avoid spiral of death (on slow devices)
         float frameTime = Math.min(delta, 0.25f);
         accumulator += frameTime;
 
-        hudViewport.apply();
-
         // Set the SpriteBatch's projection matrix
-        batch.setProjectionMatrix(hudViewport.getCamera().combined);
+        //batch.setProjectionMatrix(hudViewport.getCamera().combined);
+
+//        batch.setProjectionMatrix();
 
         batch.begin();
 
-        for (int i = 0; i < numSounds; i++) {
-            cannons[i].render(batch,delta);
-        }
+//        for (int i = 0; i < numSounds; i++) {
+//            cannons[i].render(batch,delta);
+//        }
+        cannons[0].render(batch,delta);
+
 
         // Draw the number of player deaths in the top left
         font.setColor(Color.CYAN);
 
         float fps = 1 / delta;
         Gdx.app.log(TAG,"fps =" + fps);
+
+        font48.draw(batch,  "Text", width/2 , height/2);
 
         batch.end();
     }
@@ -160,7 +180,7 @@ public class GameScreen implements Screen {
         height = Gdx.graphics.getHeight();
 
         // Update HUD viewport
-        hudViewport.update(width, height, true);
+        //hudViewport.update(width, height, true);
 
         // Set font scale to min(width, height) / reference screen size
         //font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
