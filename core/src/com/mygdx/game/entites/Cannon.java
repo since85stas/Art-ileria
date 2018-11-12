@@ -54,7 +54,8 @@ public class Cannon {
 
     public void  render(Batch batch, float dt) {
 
-        float width = Gdx.graphics.getWidth()/gameScreen.getNumSounds();
+        float width = (Gdx.graphics.getWidth()-2*Constants.CANNON_LATERAL_MARGIN-Constants.SOURCE_SIZE_X)/
+                gameScreen.getNumSounds();
         float height = width;
 
         batch.draw(texture,position.x,position.y,width,height);

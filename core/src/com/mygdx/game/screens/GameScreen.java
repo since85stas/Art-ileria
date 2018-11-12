@@ -30,6 +30,10 @@ public class GameScreen implements Screen {
     int numSteps;
     float timeOfGame;
     float timeOfStep;
+    int lives;
+
+    // переменные уровня
+    float gameTime;
 
     // screen dimensions
     private int width ;
@@ -47,14 +51,15 @@ public class GameScreen implements Screen {
 
     // Add BitmapFont
     BitmapFont font;
-    BitmapFont font48;
+    BitmapFont font24;
 
-	public GameScreen( SpriteBatch batch, int numSounds, float timeOfGame, float timeOfStep, int numSteps){
+	public GameScreen( SpriteBatch batch, int numSounds, float timeOfGame, float timeOfStep, int numSteps, int lives){
 		this.batch      = batch ;
 		this.numSounds  = numSounds;
 		this.timeOfGame = timeOfGame;
 		this.timeOfStep = timeOfStep;
 		this.numSteps   = numSteps;
+		this.lives      = lives;
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		cannonsCoord = new Vector2[numSounds];
@@ -63,6 +68,9 @@ public class GameScreen implements Screen {
 		positionCoord = new Vector2[numSteps];
 		getInitialCoordinates();
 		getSounds();
+
+        // шрифт для заголовка
+        generateFont24();
 	}
 
 	private void getSounds () {
@@ -72,8 +80,12 @@ public class GameScreen implements Screen {
     }
 
     private void getInitialCoordinates() {
-        for (int i = 0; i < numSounds ; i++) {
-            cannonsCoord[i] = new Vector2(width/(numSounds+1)*(i+1),Constants.CANNON_DOWN_MARGIN);
+
+	    cannonsCoord[0] = new Vector2(Constants.CANNON_LATERAL_MARGIN,Constants.CANNON_DOWN_MARGIN);
+	    float cannonsWidth = (width-2*Constants.CANNON_LATERAL_MARGIN - Constants.SOURCE_SIZE_X)/(numSounds+1);
+        for (int i = 1; i < numSounds ; i++) {
+            cannonsCoord[i] = new Vector2( cannonsCoord[0].x + cannonsWidth*i
+                    , Constants.CANNON_DOWN_MARGIN);
         }
 
         for (int i = 0; i < numSteps; i++) {
@@ -89,18 +101,16 @@ public class GameScreen implements Screen {
         //  Initialize the BitmapFont
         font = new BitmapFont();
 
-
-
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
             cannons[i] = new Cannon(this,cannonsCoord[i],sounds[i]);
         }
     }
 
-
-
     @Override
     public void render(float delta) {
+        // время игры
+	    gameTime +=delta;
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -115,8 +125,6 @@ public class GameScreen implements Screen {
         for (int i = 0; i < numSounds; i++) {
             cannons[i].render(batch,delta);
         }
-//        cannons[0].render(batch,delta);
-
 
         // Draw the number of player deaths in the top left
         font.setColor(Color.CYAN);
@@ -124,9 +132,22 @@ public class GameScreen implements Screen {
         float fps = 1 / delta;
         Gdx.app.log(TAG,"fps =" + fps);
 
-//        font48.draw(batch,  "Text", width/2 , height/2);
+        // рисуем hud
+        font24.draw(batch,"time " + gameTime,Constants.HUD_MARGIN,height-Constants.HUD_MARGIN);
+        font24.draw(batch,"lives " + lives,width/2,height-Constants.HUD_MARGIN);
+
+        drawSoundSource();
 
         batch.end();
+    }
+
+    private void drawSoundSource() {
+	    float xSource = cannonsCoord[numSounds-1].x + (width - cannonsCoord[numSounds-1].x) / 2 ;
+        font24.draw(batch,"sound", xSource,Constants.CANNON_DOWN_MARGIN + Constants.SOURCE_SIZE_Y/2);
+    }
+
+    private void playSound(float duration, SoundItem soundItem ) {
+
     }
 
     public void update (float dt) {
@@ -167,6 +188,18 @@ public class GameScreen implements Screen {
 
         // Set font scale to min(width, height) / reference screen size
         //font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
+    }
+
+    private void generateFont24() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 12;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        parameter.shadowOffsetX = 3;
+        parameter.shadowOffsetY = -3;
+        parameter.shadowColor = Color.BLACK;
+        font24 = generator.generateFont(parameter);
     }
 
     public int getNumSounds() {

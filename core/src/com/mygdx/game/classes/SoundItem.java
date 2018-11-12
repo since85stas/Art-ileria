@@ -5,12 +5,18 @@ public class SoundItem {
     private float  duration;
     private String fileName;
 
-     public SoundItem (String name) {
+     public SoundItem (String name,String fileName ) {
          this.name = name;
+         this.fileName = fileName;
      }
+
 
     public String getName() {
         return name;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public float getDuration() {

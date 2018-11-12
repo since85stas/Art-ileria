@@ -17,11 +17,12 @@ public class ArtGame extends Game {
 	float durationOfGame = 20.f;
 	float durationOfStep = 2.f;
 	int numSteps       = 3;
+	int lives = 5;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		gameScreen = new GameScreen(batch,numSounds, durationOfGame, durationOfStep, numSteps);
+		gameScreen = new GameScreen(batch,numSounds, durationOfGame, durationOfStep, numSteps, lives );
 		viewport   = new FitViewport(640,480);
 		setScreen(gameScreen);
 	}
