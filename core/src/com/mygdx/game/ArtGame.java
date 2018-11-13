@@ -13,7 +13,8 @@ public class ArtGame extends Game {
 	FitViewport viewport;
 
 	// временные параметры
-	int numSounds    = 7;
+	int numSounds    = 10;
+	int[] soundSequence = {0,1,2,3,4,5,6,7,8,9};
 	float durationOfGame = 20.f;
 	float durationOfStep = 2.f;
 	int numSteps       = 3;
@@ -22,7 +23,7 @@ public class ArtGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		gameScreen = new GameScreen(batch,numSounds, durationOfGame, durationOfStep, numSteps, lives );
+		gameScreen = new GameScreen(batch,numSounds,soundSequence, durationOfGame, durationOfStep, numSteps, lives );
 		viewport   = new FitViewport(640,480);
 		setScreen(gameScreen);
 	}

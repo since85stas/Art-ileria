@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -14,6 +13,7 @@ import com.mygdx.game.ArtGame;
 import com.mygdx.game.classes.SoundItem;
 import com.mygdx.game.entites.Cannon;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.SoundBase;
 
 public class GameScreen implements Screen {
 
@@ -25,12 +25,14 @@ public class GameScreen implements Screen {
     private  SpriteBatch batch ;
 
     // параметры уровня
-    int numSounds;
-    SoundItem sounds[];
-    int numSteps;
-    float timeOfGame;
-    float timeOfStep;
-    int lives;
+    private int numSounds;     // число возможных звуков
+    private SoundItem[] usedSounds ; // число используемых звуков
+    private int[]  gameSoundsNumbers; // номера звуков уровня
+    private SoundItem soundsSequence[];      // последовательность звуков уровня
+    private int numSteps;
+    private float timeOfGame;
+    private float timeOfStep;
+    private int lives;
 
     // переменные уровня
     float gameTime;
@@ -53,9 +55,19 @@ public class GameScreen implements Screen {
     BitmapFont font;
     BitmapFont font24;
 
-	public GameScreen( SpriteBatch batch, int numSounds, float timeOfGame, float timeOfStep, int numSteps, int lives){
+    // экземпляр со звуками уровня
+    SoundBase soundBase;
+
+	public GameScreen( SpriteBatch batch,
+                       int numSounds,
+                       int[] gameSoundsNumbers,
+                       float timeOfGame,
+                       float timeOfStep,
+                       int numSteps,
+                       int lives){
 		this.batch      = batch ;
 		this.numSounds  = numSounds;
+		this.gameSoundsNumbers = gameSoundsNumbers;
 		this.timeOfGame = timeOfGame;
 		this.timeOfStep = timeOfStep;
 		this.numSteps   = numSteps;
@@ -64,7 +76,6 @@ public class GameScreen implements Screen {
 		height = Gdx.graphics.getHeight();
 		cannonsCoord = new Vector2[numSounds];
 		cannons      = new Cannon[numSounds];
-		sounds       = new SoundItem[numSounds];
 		positionCoord = new Vector2[numSteps];
 		getInitialCoordinates();
 		getSounds();
@@ -74,8 +85,11 @@ public class GameScreen implements Screen {
 	}
 
 	private void getSounds () {
-        for (int i = 0; i < numSounds ; i++) {
-            sounds[i] = new SoundItem("Sound " + i);
+        soundBase = new SoundBase();
+        boolean result = soundBase.generateSoundsBase();
+        if (result) {
+            usedSounds = soundBase.getGameSounds();
+            soundsSequence = soundBase.getGameSoundSequence(gameSoundsNumbers);
         }
     }
 
@@ -103,7 +117,7 @@ public class GameScreen implements Screen {
 
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
-            cannons[i] = new Cannon(this,cannonsCoord[i],sounds[i]);
+            cannons[i] = new Cannon(this,cannonsCoord[i], usedSounds[i]);
         }
     }
 
