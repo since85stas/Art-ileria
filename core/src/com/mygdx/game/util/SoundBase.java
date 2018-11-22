@@ -55,7 +55,7 @@ public class SoundBase {
     private String[] getFileNames() {
         //String[] fileNames = new String[filesNumber];
         String[] fileNames = {"c1pno0100.mp3", "c1pno0200.mp3", "c1pno0300.mp3", "c1pno0400.mp3",
-                "c1pno0500.mp3", "c1pno0600.mp3", "c1pno0700.mp3", "c1pno0800.mp3", "c1pno0900.mp3", "c1pno01000.mp3"};
+                "c1pno0500.mp3", "c1pno0600.mp3", "c1pno0700.mp3", "c1pno0800.mp3", "c1pno0900.mp3", "c1pno1000.mp3"};
         return fileNames;
     }
 

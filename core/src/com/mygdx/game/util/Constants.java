@@ -13,6 +13,7 @@ public class Constants {
     // константы пушек
     public static final float CANNON_DOWN_MARGIN = 30.f;
     public static final float CANNON_LATERAL_MARGIN = 20.f;
+    public static final float TEXT_RATIO = 0.3f;
 
     // константы источника
     public static final float SOURCE_SIZE_X    = 40.f;
@@ -23,6 +24,7 @@ public class Constants {
 
 
     // константы для игры
+    public static final float STAGE_PAUSE_TIME = 0.5f;
 
     //константы для текстур пушек
     public static final float CANNON_WIDTH = 64;
