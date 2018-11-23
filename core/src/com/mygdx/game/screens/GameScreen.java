@@ -14,6 +14,7 @@ import com.mygdx.game.ArtGame;
 import com.mygdx.game.classes.SoundItem;
 import com.mygdx.game.entites.Cannon;
 import com.mygdx.game.entites.SoundSequence;
+import com.mygdx.game.overlays.GameScreenHud;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.SoundBase;
 
@@ -25,6 +26,7 @@ public class GameScreen implements Screen {
 
     private ArtGame game;
     private  SpriteBatch batch ;
+    private GameScreenHud hud;
 
     // параметры уровня
     private int numSounds;     // число возможных звуков
@@ -66,10 +68,7 @@ public class GameScreen implements Screen {
     // Add ScreenViewport for HUD
     ScreenViewport hudViewport;
 
-    // Add BitmapFont
-    BitmapFont font;
-    BitmapFont hudFont;
-    BitmapFont resultFont;
+
 
     // экземпляр со звуками уровня
     SoundBase soundBase;
@@ -82,6 +81,7 @@ public class GameScreen implements Screen {
                        int numAttempts,
                        int lives){
         batch = new SpriteBatch();
+        hud = new GameScreenHud();
 		this.numSounds  = numSounds;
 		this.gameSoundsNumbers = gameSoundsNumbers;
 		this.timeOfGame = timeOfGame;
@@ -97,9 +97,7 @@ public class GameScreen implements Screen {
 		getSounds();
         sequence =new SoundSequence(soundsSequence);
 
-        // шрифт для заголовка
-        generateHudFont();
-        generateResultFont();
+
 
         isStart = false;
 	}
@@ -131,9 +129,6 @@ public class GameScreen implements Screen {
         // Initialize the HUD viewport
         hudViewport = new ScreenViewport();
 
-        //  Initialize the BitmapFont
-        font = new BitmapFont();
-
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
             cannons[i] = new Cannon(this,cannonsCoord[i], usedSounds[i]);
@@ -159,17 +154,14 @@ public class GameScreen implements Screen {
             cannons[i].render(batch,delta);
         }
 
-        // Draw the number of player deaths in the top left
-        font.setColor(Color.CYAN);
-
         float fps = 1 / delta;
         Gdx.app.log(TAG,"fps =" + fps);
 
         // рисуем hud
-        hudFont.draw(batch,"time  " + String.format("%.2f", durationOfAttempt - attemptTime),
-                Constants.HUD_MARGIN,height-Constants.HUD_MARGIN);
-        hudFont.draw(batch,"lives " + lives,width/2,height-Constants.HUD_MARGIN);
-        hudFont.draw(batch,"scores " + scores,width/2 + 90,height-Constants.HUD_MARGIN);
+//        hudFont.draw(batch,"time  " + String.format("%.2f", durationOfAttempt - attemptTime),
+//                Constants.HUD_MARGIN,height-Constants.HUD_MARGIN);
+//        hudFont.draw(batch,"lives " + lives,width/2,height-Constants.HUD_MARGIN);
+//        hudFont.draw(batch,"scores " + scores,width/2 + 90,height-Constants.HUD_MARGIN);
 
         drawSoundSource();
         drawHint();
@@ -179,23 +171,25 @@ public class GameScreen implements Screen {
         } else {
             float x = width  / 2 - 120;
             float y = height /2 - 40 ;
-            resultFont.draw(batch,"End of sounds ", x,y);
+//            resultFont.draw(batch,"End of sounds ", x,y);
         }
+
+        hud.render(batch);
 
         batch.end();
     }
 
     private void drawSoundSource() {
 	    float xSource = cannonsCoord[numSounds-1].x + (width - cannonsCoord[numSounds-1].x) / 2 ;
-        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getName(),
-                xSource,Constants.CANNON_DOWN_MARGIN + Constants.SOURCE_SIZE_Y/2);
+//        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getName(),
+//                xSource,Constants.CANNON_DOWN_MARGIN + Constants.SOURCE_SIZE_Y/2);
     }
 
     private void drawHint() {
         float x = width  / 2 - 120;
         float y = height /2 ;
-        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getNumber()+ "  " + "attempt" + (currentAttempt + 1),
-                x,y);
+//        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getNumber()+ "  " + "attempt" + (currentAttempt + 1),
+//                x,y);
     }
 
     public void update (float dt) {
@@ -237,7 +231,7 @@ public class GameScreen implements Screen {
         if (clickedCannon != null) {
             float x = width / 2 - 120;
             float y = height / 2 - 20;
-            resultFont.draw(batch, " " + clickResult, x, y);
+//            resultFont.draw(batch, " " + clickResult, x, y);
         }
     }
 
@@ -267,16 +261,16 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose () {
 		batch.dispose();
-        hudFont.dispose();
-        resultFont.dispose();
+//        hudFont.dispose();
+//        resultFont.dispose();
         //soundInterval.dispose();
 	}
 
     @Override
     public void hide() {
         batch.dispose();
-        hudFont.dispose();
-        resultFont.dispose();
+//        hudFont.dispose();
+//        resultFont.dispose();
     }
 
     @Override
@@ -301,29 +295,7 @@ public class GameScreen implements Screen {
         //font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
     }
 
-    private void generateHudFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 18;
-        parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 2;
-        parameter.shadowOffsetX = 3;
-        parameter.shadowOffsetY = -3;
-        parameter.shadowColor = Color.BLACK;
-        hudFont = generator.generateFont(parameter);
-    }
 
-    private void generateResultFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 48;
-        parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 2;
-        parameter.shadowOffsetX = 3;
-        parameter.shadowOffsetY = -3;
-        parameter.shadowColor = Color.BLACK;
-        resultFont = generator.generateFont(parameter);
-    }
 
     public int getNumSounds() {
         return numSounds;

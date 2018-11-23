@@ -26,7 +26,6 @@ public class ArtGame extends Game {
 	public void setGameScreen() {
 
 		gameScreen = new GameScreen(numSounds,soundSequence, durationOfGame, durationOfAttempt, numAttempts , lives );
-		viewport   = new FitViewport(640,480);
 		setScreen(gameScreen);
 	}
 
