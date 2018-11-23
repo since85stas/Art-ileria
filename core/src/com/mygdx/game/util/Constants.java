@@ -9,6 +9,8 @@ public class Constants {
     // константы игрового экрана
     public static final float HUD_FONT_REFERENCE_SCREEN_SIZE = 240.0f;
     public static final float HUD_MARGIN   = 30.f;
+    public static final float HUD_MAIN_TEXT = 0.04f;
+    public static final float HUD_BIG_TEXT = 0.1f;
 
     // константы пушек
     public static final float CANNON_DOWN_MARGIN = 30.f;
@@ -24,9 +26,12 @@ public class Constants {
 
 
     // константы для игры
-    public static final float STAGE_PAUSE_TIME = 0.5f;
+    public static final float STAGE_DELAY_TIME = 0.5f;
 
     //константы для текстур пушек
     public static final float CANNON_WIDTH = 64;
     public static final float CANNON_HEIGHT = 64;
+
+    // константы для текста
+    public static final float BLINKING_PERIOD = 2.f;
 }

@@ -3,11 +3,8 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
@@ -32,7 +29,7 @@ public class GameScreen implements Screen {
     private int numSounds;     // число возможных звуков
     private SoundItem[] usedSounds ; // число используемых звуков
     private int[]  gameSoundsNumbers; // номера звуков уровня
-    private SoundItem soundsSequence[];      // последовательность звуков уровня
+    private SoundItem[] soundsSequence;      // последовательность звуков уровня
     private int numAttempts;  // число попыток на каждый звук
     private float timeOfGame;
     private float durationOfAttempt;
@@ -45,11 +42,12 @@ public class GameScreen implements Screen {
     int currentAttempt;
     float gameTime;
     float stageTime;
-    float pauseTime;
+    float delayTime;
     float attemptTime;
     private boolean isStart;
     private SoundItem currentSound; // играющий в данный момент звук
     boolean isEnd = false; // конец последовательности
+    boolean onPause = false ; //стоим на паузе выводим результата
     private Cannon clickedCannon; // выбранная пушка
 
     boolean clickResult ;
@@ -81,7 +79,6 @@ public class GameScreen implements Screen {
                        int numAttempts,
                        int lives){
         batch = new SpriteBatch();
-        hud = new GameScreenHud();
 		this.numSounds  = numSounds;
 		this.gameSoundsNumbers = gameSoundsNumbers;
 		this.timeOfGame = timeOfGame;
@@ -90,14 +87,13 @@ public class GameScreen implements Screen {
 		this.lives      = lives;
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
+        hud = new GameScreenHud(width,height);
 		cannonsCoord = new Vector2[numSounds];
 		cannons      = new Cannon[numSounds];
 		positionCoord = new Vector2[numAttempts];
 		getInitialCoordinates();
 		getSounds();
-        sequence =new SoundSequence(soundsSequence);
-
-
+        sequence =new SoundSequence(soundsSequence, numAttempts);
 
         isStart = false;
 	}
@@ -157,12 +153,6 @@ public class GameScreen implements Screen {
         float fps = 1 / delta;
         Gdx.app.log(TAG,"fps =" + fps);
 
-        // рисуем hud
-//        hudFont.draw(batch,"time  " + String.format("%.2f", durationOfAttempt - attemptTime),
-//                Constants.HUD_MARGIN,height-Constants.HUD_MARGIN);
-//        hudFont.draw(batch,"lives " + lives,width/2,height-Constants.HUD_MARGIN);
-//        hudFont.draw(batch,"scores " + scores,width/2 + 90,height-Constants.HUD_MARGIN);
-
         drawSoundSource();
         drawHint();
 
@@ -174,7 +164,9 @@ public class GameScreen implements Screen {
 //            resultFont.draw(batch,"End of sounds ", x,y);
         }
 
-        hud.render(batch);
+        hud.render(batch, delta,durationOfAttempt-attemptTime,lives,scores,
+                sequence.getCurrentSound().getNumber(),currentAttempt + 1,onPause, clickResult);
+//        hud.render(batch);
 
         batch.end();
     }
@@ -194,51 +186,59 @@ public class GameScreen implements Screen {
 
     public void update (float dt) {
 
-        // время игры
-        gameTime +=dt;
+        if ( !onPause) {
+            // время игры
+            gameTime += dt;
 
-        if (pauseTime < Constants.STAGE_PAUSE_TIME) {
-            pauseTime += dt;
-            clickedCannon = null;
-        } else  {
-            if(attemptTime < durationOfAttempt) {
-                attemptTime += dt;
+            if (delayTime < Constants.STAGE_DELAY_TIME) {
+                delayTime += dt;
+                clickedCannon = null;
             } else {
-                goToNextAttempt();
-            }
-        }
-
-        Gdx.input.setInputProcessor (new InputAdapter() {
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                clickedCannon =  checkClickEvent(screenX,screenY);
-                if (clickedCannon != null) {
-                    if (clickedCannon.getSound() == sequence.getCurrentSound()) {
-                        clickResult = true;
-                        Gdx.app.log("check click", "true");
-                        scores++;
-                        goToNextAttempt();
-                    } else {
-                        clickResult = false;
-                        lives--;
-                        goToNextAttempt();
-                        Gdx.app.log("check click", "false");
-                    }
+                if (attemptTime < durationOfAttempt) {
+                    attemptTime += dt;
+                } else {
+                    goToNextAttempt();
                 }
-                return false;
             }
-        });
 
-        if (clickedCannon != null) {
-            float x = width / 2 - 120;
-            float y = height / 2 - 20;
+            Gdx.input.setInputProcessor(new InputAdapter() {
+                public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                    clickedCannon = checkClickEvent(screenX, screenY);
+                    if (clickedCannon != null && !onPause) {
+                        onPause = true;
+                        if (clickedCannon.getSound() == sequence.getCurrentSound()) {
+                            clickResult = true;
+                            sequence.answerCorrect(currentAttempt);
+                            Gdx.app.log("check click", "true");
+                            scores++;
+//                            goToNextAttempt();
+                        } else {
+                            clickResult = false;
+                            lives--;
+//                            goToNextAttempt();
+                            Gdx.app.log("check click", "false");
+                        }
+                    } else if (onPause) {
+
+                        goToNextAttempt();
+                    }
+                    return false;
+                }
+            });
+
+            if (clickedCannon != null) {
+                float x = width / 2 - 120;
+                float y = height / 2 - 20;
 //            resultFont.draw(batch, " " + clickResult, x, y);
+            }
         }
     }
 
     private void goToNextAttempt() {
+        onPause = false;
         currentAttempt++;
         attemptTime = 0;
-        pauseTime = 0;
+        delayTime = 0;
         if (currentAttempt >= numAttempts) {
             currentAttempt = 0;
             isEnd = !sequence.playNext();
