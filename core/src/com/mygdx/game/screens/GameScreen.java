@@ -31,22 +31,25 @@ public class GameScreen implements Screen {
     private SoundItem[] usedSounds ; // число используемых звуков
     private int[]  gameSoundsNumbers; // номера звуков уровня
     private SoundItem soundsSequence[];      // последовательность звуков уровня
-    private int numSteps;
+    private int numAttempts;  // число попыток на каждый звук
     private float timeOfGame;
-    private float timeOfStep;
+    private float durationOfAttempt;
     private int lives;
     private float stageDuration = 2;
-    SoundSequence sequence;
+    private SoundSequence sequence;
 
     // переменные уровня
+    int scores ;
+    int currentAttempt;
     float gameTime;
     float stageTime;
     float pauseTime;
+    float attemptTime;
     private boolean isStart;
     private SoundItem currentSound; // играющий в данный момент звук
     boolean isEnd = false; // конец последовательности
     private Cannon clickedCannon; // выбранная пушка
-    private int scores ;
+
     boolean clickResult ;
 
     // screen dimensions
@@ -71,25 +74,25 @@ public class GameScreen implements Screen {
     // экземпляр со звуками уровня
     SoundBase soundBase;
 
-    public GameScreen( SpriteBatch batch,
+    public GameScreen(
                        int numSounds,
                        int[] gameSoundsNumbers,
                        float timeOfGame,
-                       float stepDuration,
-                       int numSteps,
+                       float durationOfAttempt,
+                       int numAttempts,
                        int lives){
-		this.batch      = batch ;
+        batch = new SpriteBatch();
 		this.numSounds  = numSounds;
 		this.gameSoundsNumbers = gameSoundsNumbers;
 		this.timeOfGame = timeOfGame;
-		this.timeOfStep = stepDuration;
-		this.numSteps   = numSteps;
+		this.durationOfAttempt = durationOfAttempt;
+		this.numAttempts = numAttempts;
 		this.lives      = lives;
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 		cannonsCoord = new Vector2[numSounds];
 		cannons      = new Cannon[numSounds];
-		positionCoord = new Vector2[numSteps];
+		positionCoord = new Vector2[numAttempts];
 		getInitialCoordinates();
 		getSounds();
         sequence =new SoundSequence(soundsSequence);
@@ -118,8 +121,8 @@ public class GameScreen implements Screen {
                     , Constants.CANNON_DOWN_MARGIN);
         }
 
-        for (int i = 0; i < numSteps; i++) {
-            positionCoord[i] = new Vector2(width/2,height/numSteps*(i+1));
+        for (int i = 0; i < numAttempts; i++) {
+            positionCoord[i] = new Vector2(width/2,height/ numAttempts *(i+1));
         }
     }
 
@@ -163,7 +166,7 @@ public class GameScreen implements Screen {
         Gdx.app.log(TAG,"fps =" + fps);
 
         // рисуем hud
-        hudFont.draw(batch,"time  " + String.format("%.2f", stageDuration - stageTime),
+        hudFont.draw(batch,"time  " + String.format("%.2f", durationOfAttempt - attemptTime),
                 Constants.HUD_MARGIN,height-Constants.HUD_MARGIN);
         hudFont.draw(batch,"lives " + lives,width/2,height-Constants.HUD_MARGIN);
         hudFont.draw(batch,"scores " + scores,width/2 + 90,height-Constants.HUD_MARGIN);
@@ -191,7 +194,8 @@ public class GameScreen implements Screen {
     private void drawHint() {
         float x = width  / 2 - 120;
         float y = height /2 ;
-        hudFont.draw(batch,"Play sound " + sequence.getCurrentSound().getNumber(),  x,y);
+        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getNumber()+ "  " + "attempt" + (currentAttempt + 1),
+                x,y);
     }
 
     public void update (float dt) {
@@ -203,12 +207,10 @@ public class GameScreen implements Screen {
             pauseTime += dt;
             clickedCannon = null;
         } else  {
-            if(stageTime < stageDuration) {
-                stageTime += dt;
+            if(attemptTime < durationOfAttempt) {
+                attemptTime += dt;
             } else {
-                stageTime = 0;
-                pauseTime = 0;
-                isEnd = !sequence.playNext();
+                goToNextAttempt();
             }
         }
 
@@ -220,9 +222,11 @@ public class GameScreen implements Screen {
                         clickResult = true;
                         Gdx.app.log("check click", "true");
                         scores++;
+                        goToNextAttempt();
                     } else {
                         clickResult = false;
                         lives--;
+                        goToNextAttempt();
                         Gdx.app.log("check click", "false");
                     }
                 }
@@ -234,6 +238,18 @@ public class GameScreen implements Screen {
             float x = width / 2 - 120;
             float y = height / 2 - 20;
             resultFont.draw(batch, " " + clickResult, x, y);
+        }
+    }
+
+    private void goToNextAttempt() {
+        currentAttempt++;
+        attemptTime = 0;
+        pauseTime = 0;
+        if (currentAttempt >= numAttempts) {
+            currentAttempt = 0;
+            isEnd = !sequence.playNext();
+        } else {
+            sequence.playCurrent();
         }
     }
 

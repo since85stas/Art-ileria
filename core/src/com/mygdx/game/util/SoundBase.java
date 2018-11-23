@@ -20,20 +20,6 @@ public class SoundBase {
         return gameSounds.toArray( new SoundItem[gameSounds.size()]);
     }
 
-//    public boolean generateGameSounds() {
-//
-//        // получаем звуки для игры
-//        boolean result = generateSoundsBase();
-//
-//        // проверяем на валидность звуки
-//        //boolean valid = checkNumbersForValid ( soundsNumbers );
-//
-//        if (result ) {
-////            for (int i = 0; i < soundsNumbers.length; i++) {
-////            }
-//        }
-//        return false;
-//    }
 
     public boolean generateSoundsBase() {
         boolean result = false;
@@ -65,13 +51,17 @@ public class SoundBase {
     }
 
     public SoundItem[] getGameSoundSequence(int[] soundsNumbers ) {
+
+        boolean valid = checkNumbersForValid(soundsNumbers);
         SoundItem[] sounds = new SoundItem[soundsNumbers.length];
-        for (int i = 0; i < soundsNumbers.length ; i++) {
-            SoundItem sound = getSoundItemFromNumber(soundsNumbers[i]);
-            if (sound!=null) {
-                sounds[i] = sound;
-            }  else {
-                return null;
+        if(valid) {
+            for (int i = 0; i < soundsNumbers.length; i++) {
+                SoundItem sound = getSoundItemFromNumber(soundsNumbers[i]);
+                if (sound != null) {
+                    sounds[i] = sound;
+                } else {
+                    return null;
+                }
             }
         }
         return sounds;
@@ -87,7 +77,9 @@ public class SoundBase {
     private boolean checkNumbersForValid(int[] sounds) {
         boolean valid = true;
         for (int i = 0; i < sounds.length; i++) {
-
+            if (sounds[i] > filesNumber) {
+                return false;
+            }
         }
 
         return valid;

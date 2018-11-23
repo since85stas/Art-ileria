@@ -17,6 +17,10 @@ public class SoundSequence {
         }
     }
 
+    public void playCurrent() {
+        sounds[i].playSound();
+    }
+
     public boolean playNext() {
         if (i < sounds.length-1) {
             sounds[i].stopSound();
