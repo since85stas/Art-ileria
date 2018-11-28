@@ -19,6 +19,10 @@ public class LevelResult {
         isWin = win;
     }
 
+    public boolean isWin() {
+        return isWin;
+    }
+
     public void addTime(float dt) {
         levelTime++;
     }
@@ -26,4 +30,34 @@ public class LevelResult {
     public void setAnswer ( int iNum, int iAttemp, boolean result ) {
         answers[iNum][iAttemp] = result;
     }
+
+    public String[] generateOutStrings() {
+        String[] strings= new String[sounds.length];
+
+        for (int i = 0; i < strings.length; i++) {
+            String soundName = sounds[i].getName();
+            String answersStr = getAnswers(i);
+            strings[i] = soundName + "  " + answersStr;
+        }
+
+        return strings;
+    }
+
+    private String getAnswers(int iSound) {
+        String answersStr;
+        int correct = 0;
+        for (int i = 0; i < answers[iSound].length; i++) {
+            if (answers[iSound][0]) {
+                return "100%";
+            }  else {
+                if (answers[iSound][i]) {
+                    correct++;
+                }
+            }
+        }
+        float perc = correct/answers[iSound].length * 100;
+        answersStr = String.format("%2f", perc) + "%";
+        return answersStr;
+    }
 }
+

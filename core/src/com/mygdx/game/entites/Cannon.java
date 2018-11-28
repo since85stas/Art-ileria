@@ -52,8 +52,10 @@ public class Cannon extends ClickListener {
     }
 
     private void generateFont12() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        FreeTypeFontGenerator generator =
+                new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+                new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size =  (int)(height*Constants.TEXT_RATIO);
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
@@ -64,12 +66,12 @@ public class Cannon extends ClickListener {
     }
 
     public void  render(Batch batch, float dt) {
-
         batch.draw(texture,position.x,position.y,width,height);
         String title = soundItem.getName();
         float titleWidth = layout.width;
         if (cannonFont != null) {
-            cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y);
+            cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y +
+            Constants.HUD_MARGIN);
         }
     }
 

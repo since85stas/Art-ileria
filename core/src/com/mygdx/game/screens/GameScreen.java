@@ -13,6 +13,7 @@ import com.mygdx.game.entites.Cannon;
 import com.mygdx.game.entites.SoundSequence;
 import com.mygdx.game.overlays.GameScreenHud;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.LevelResult;
 import com.mygdx.game.util.SoundBase;
 
 public class GameScreen implements Screen {
@@ -26,6 +27,7 @@ public class GameScreen implements Screen {
     private GameScreenHud hud;
 
     // параметры уровня
+    ArtGame artGame;
     private int numSounds;     // число возможных звуков
     private SoundItem[] usedSounds ; // число используемых звуков
     private int[]  gameSoundsNumbers; // номера звуков уровня
@@ -66,12 +68,10 @@ public class GameScreen implements Screen {
     // Add ScreenViewport for HUD
     ScreenViewport hudViewport;
 
-
-
     // экземпляр со звуками уровня
     SoundBase soundBase;
 
-    public GameScreen(
+    public GameScreen( ArtGame artGame,
                        int numSounds,
                        int[] gameSoundsNumbers,
                        float timeOfGame,
@@ -79,6 +79,7 @@ public class GameScreen implements Screen {
                        int numAttempts,
                        int lives){
         batch = new SpriteBatch();
+        this.artGame = artGame;
 		this.numSounds  = numSounds;
 		this.gameSoundsNumbers = gameSoundsNumbers;
 		this.timeOfGame = timeOfGame;
@@ -161,6 +162,13 @@ public class GameScreen implements Screen {
         } else {
             float x = width  / 2 - 120;
             float y = height /2 - 40 ;
+            if (lives > 0) {
+                sequence.result.setWin(true);
+            } else {
+                sequence.result.setWin(false);
+            }
+
+            artGame.setEndLevelScreen();
 //            resultFont.draw(batch,"End of sounds ", x,y);
         }
 
@@ -194,7 +202,7 @@ public class GameScreen implements Screen {
                 delayTime += dt;
                 clickedCannon = null;
             } else {
-                if (attemptTime < durationOfAttempt) {
+                if (attemptTime < durationOfAttempt ) {
                     attemptTime += dt;
                 } else {
                     goToNextAttempt();
@@ -216,6 +224,7 @@ public class GameScreen implements Screen {
                             clickResult = false;
                             lives--;
 //                            goToNextAttempt();
+                            sequence.answerFalse(currentAttempt);
                             Gdx.app.log("check click", "false");
                         }
                     } else if (onPause) {
@@ -237,9 +246,10 @@ public class GameScreen implements Screen {
     private void goToNextAttempt() {
         onPause = false;
         currentAttempt++;
+        sequence.addTime(attemptTime);
         attemptTime = 0;
-        delayTime = 0;
-        if (currentAttempt >= numAttempts) {
+        delayTime   = 0;
+        if (currentAttempt >= numAttempts || clickResult) {
             currentAttempt = 0;
             isEnd = !sequence.playNext();
         } else {
@@ -299,5 +309,9 @@ public class GameScreen implements Screen {
 
     public int getNumSounds() {
         return numSounds;
+    }
+
+    public LevelResult getLevelResult () {
+        return sequence.result;
     }
 }

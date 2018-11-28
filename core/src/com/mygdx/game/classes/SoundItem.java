@@ -1,6 +1,7 @@
 package com.mygdx.game.classes;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 
 public class SoundItem {
@@ -8,11 +9,15 @@ public class SoundItem {
     private String fileName;
     private int    number;
     private Sound sound;
+    private AssetManager assetManager;
 
      public SoundItem (String name,String fileName, int number ) {
          this.name = name;
          this.fileName = fileName;
          this.number   = number;
+         assetManager = new AssetManager();
+         assetManager.load(this.getFilePath(), Sound.class);
+         assetManager.finishLoading(); //Important!
      }
 
 
@@ -36,9 +41,15 @@ public class SoundItem {
 //        return duration;
 //    }
 
-    public void playSound () {
-         sound = Gdx.audio.newSound(Gdx.files.internal(this.getFilePath()));
-         sound.play();
+    public boolean playSound () {
+         if (assetManager.isLoaded(this.getFilePath(),Sound.class)) {
+             sound = assetManager.get(this.getFilePath(), Sound.class);
+             sound.play();
+             return true;
+         }  else {
+             Gdx.app.log("soundItem","error loading sound");
+             return false;
+         }
     }
 
     public void stopSound( ) {
@@ -46,6 +57,5 @@ public class SoundItem {
             sound.stop();
          }
     }
-
 
 }

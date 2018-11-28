@@ -7,7 +7,7 @@ public class SoundSequence {
     private SoundItem[] sounds;
     private int numAttempts;
     private int i;  // текущий номер звука
-    LevelResult result;
+    public LevelResult result;
 
     public SoundSequence (SoundItem[] sounds, int numAttempts) {
         this.sounds = sounds;
@@ -39,6 +39,14 @@ public class SoundSequence {
         result.setAnswer(i,iAttempt,true);
     }
 
+    public void answerFalse(int iAttempt) {
+        result.setAnswer(i,iAttempt,false);
+    }
+
+    public void addTime(float dt) {
+        result.addTime(dt);
+    }
+
     public SoundItem getCurrentSound() {
         return sounds[i];
     }
@@ -46,7 +54,6 @@ public class SoundSequence {
     public int getLength() {
         return sounds.length;
     }
-
 
 
 }

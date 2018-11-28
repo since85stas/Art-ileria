@@ -7,16 +7,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.LevelResult;
 
-import javax.swing.text.View;
+/**
+ * Created by seeyo on 27.11.2018.
+ */
 
-public class GameScreenHud {
-    //public final Viewport viewport;
-
+public class EndLevelHud {
     // Add BitmapFont
     BitmapFont font;
     BitmapFont hudFont;
@@ -26,59 +24,36 @@ public class GameScreenHud {
     int width;
     int height;
     float pauseTime;
+    LevelResult levelResult;
     GlyphLayout layout = new GlyphLayout();
 
-    public GameScreenHud(int width,int height) {
+    public EndLevelHud(int width, int height, LevelResult levelResult) {
         //this.viewport = new ExtendViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         this.width = width;
         this.height = height;
+        this.levelResult = levelResult;
         // шрифт для заголовка
         hudFont = generateHudFont();
         resultFont =generateResultFont();
         blinkFont =  generateHudFont();
+        String[] results = levelResult.generateOutStrings();
     }
-    public void render (Batch batch, float dt,float attemptTime,int lives, int scores, int soundNumber,
-                        int attemptNumber, boolean onPause, boolean clickedResult) {
+
+    public void render (Batch batch) {
         //resultFont.draw(batch,"End of sounds ", Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 
         // рисуем hud
         float xHud = Constants.HUD_MARGIN;
         float yHud = height-Constants.HUD_MARGIN;
-        hudFont.draw(batch,"time  " + String.format("%.2f", attemptTime),
-                Constants.HUD_MARGIN,yHud);
-        xHud = width/2;
-        hudFont.draw(batch,"lives " + lives,xHud,yHud);
-        xHud += 150;
-        hudFont.draw(batch,"scores " + scores,xHud,yHud);
+//        hudFont.draw(batch,"time  " + String.format("%.2f", attemptTime),
+//                Constants.HUD_MARGIN,yHud);
 
-        String text = "sound " + soundNumber+ "  " + "attempt " + attemptNumber;
-        layout.setText(hudFont,text);
-        float layWidth = layout.width;
-        float y = height / 2 + Constants.HUD_MARGIN;
-        hudFont.draw(batch,text,(width - layWidth)/2, y);
-        if (onPause) {
-            text = "" + clickedResult;
-            layout.setText(resultFont,text);
-            layWidth = layout.width;
-            y -= height*Constants.HUD_MAIN_TEXT*2 ;
-            resultFont.draw(batch,text,(width - layWidth)/2, y);
-
-            text = "clicked to continue";
-            layout.setText(blinkFont,text);
-            layWidth = layout.width;
-            y -= height*Constants.HUD_MAIN_TEXT*2 ;
-            pauseTime += dt;
-            blinkFont.setColor(1, 1, 1, 0.5f + 0.5f * (float) Math.sin(pauseTime * Constants.BLINKING_PERIOD));
-            blinkFont.draw(batch, text,(width - layWidth)/2,y);
-        }
     }
 
     private BitmapFont generateHudFont() {
         BitmapFont font;
-        FreeTypeFontGenerator generator =
-                new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
-                new FreeTypeFontGenerator.FreeTypeFontParameter();
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = (int)(height*Constants.HUD_MAIN_TEXT);
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
@@ -94,7 +69,7 @@ public class GameScreenHud {
         BitmapFont font;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = (int)(height*Constants.HUD_BIG_TEXT);
+        parameter.size = (int)(height*Constants.HUD_BIG_TEXT);;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
         parameter.shadowOffsetX = 3;
