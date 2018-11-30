@@ -12,6 +12,9 @@ public class Constants {
     public static final float HUD_MAIN_TEXT = 0.04f;
     public static final float HUD_BIG_TEXT = 0.1f;
 
+    // константы экрана вывода результатов
+    public static final float END_HUD_MARGIN   = 40.f;
+
     // константы пушек
     public static final float CANNON_DOWN_MARGIN = 30.f;
     public static final float CANNON_LATERAL_MARGIN = 20.f;
@@ -27,6 +30,7 @@ public class Constants {
 
     // константы для игры
     public static final float STAGE_DELAY_TIME = 0.5f;
+    public static final float STAGE_PRELOAD_TIME = 2f;
 
     //константы для текстур пушек
     public static final float CANNON_WIDTH = 64;

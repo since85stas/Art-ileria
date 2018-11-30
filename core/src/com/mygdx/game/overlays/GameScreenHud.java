@@ -22,7 +22,7 @@ public class GameScreenHud {
     BitmapFont hudFont;
     BitmapFont resultFont;
     BitmapFont blinkFont;
-    BitmapFontCache blinkFontCache; //= new BitmapFontCache(numberPrinter);
+
     int width;
     int height;
     float pauseTime;
@@ -71,6 +71,12 @@ public class GameScreenHud {
             blinkFont.setColor(1, 1, 1, 0.5f + 0.5f * (float) Math.sin(pauseTime * Constants.BLINKING_PERIOD));
             blinkFont.draw(batch, text,(width - layWidth)/2,y);
         }
+    }
+
+    public void dispose() {
+        hudFont.dispose();
+        resultFont.dispose();
+        blinkFont.dispose();
     }
 
     private BitmapFont generateHudFont() {

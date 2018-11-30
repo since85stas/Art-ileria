@@ -4,12 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 
+import java.util.Comparator;
+
 public class SoundItem {
     private String name;
     private String fileName;
     private int    number;
     private Sound sound;
     private AssetManager assetManager;
+
+    public SoundItem() {
+
+    }
 
      public SoundItem (String name,String fileName, int number ) {
          this.name = name;
@@ -19,7 +25,6 @@ public class SoundItem {
          assetManager.load(this.getFilePath(), Sound.class);
          assetManager.finishLoading(); //Important!
      }
-
 
     public String getName() {
         return name;
@@ -36,10 +41,6 @@ public class SoundItem {
     public int getNumber() {
         return number;
     }
-
-//    public float getDuration() {
-//        return duration;
-//    }
 
     public boolean playSound () {
          if (assetManager.isLoaded(this.getFilePath(),Sound.class)) {

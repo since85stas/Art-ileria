@@ -8,11 +8,20 @@ public class LevelResult {
     int correctAnsw;
     int mistakes;
     SoundItem[] sounds;
-    boolean[][] answers;
+    int[][] answers;
 
     public LevelResult (int numSounds, int numAttemps, SoundItem[] sounds) {
-        answers = new boolean[numSounds][numAttemps];
+        answers = new int[numSounds][numAttemps];
+        for (int i = 0; i < numSounds  ; i++) {
+            for (int j = 0; j < numAttemps ; j++) {
+                answers[i][j] = -1;
+            }
+        }
         this.sounds = sounds;
+    }
+
+    private void initArray() {
+
     }
 
     public void setWin(boolean win) {
@@ -28,7 +37,11 @@ public class LevelResult {
     }
 
     public void setAnswer ( int iNum, int iAttemp, boolean result ) {
-        answers[iNum][iAttemp] = result;
+        if (result){
+            answers[iNum][iAttemp] = 1;
+        } else {
+            answers[iNum][iAttemp] = 0;
+        }
     }
 
     public String[] generateOutStrings() {
@@ -46,17 +59,17 @@ public class LevelResult {
     private String getAnswers(int iSound) {
         String answersStr;
         int correct = 0;
+        int mistakes = 0;
         for (int i = 0; i < answers[iSound].length; i++) {
-            if (answers[iSound][0]) {
-                return "100%";
-            }  else {
-                if (answers[iSound][i]) {
-                    correct++;
-                }
+            if (answers[iSound][i] == 1) {
+                correct ++;
+            }  else if (answers[iSound][i] == 0) {
+                mistakes++;
             }
         }
-        float perc = correct/answers[iSound].length * 100;
-        answersStr = String.format("%2f", perc) + "%";
+        //float perc = correct/answers[iSound].length * 100;
+//        answersStr = String.format("%2f", perc) + "%";
+        answersStr = "mistakes " + String.valueOf(mistakes);
         return answersStr;
     }
 }

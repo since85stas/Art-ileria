@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.DelayedRemovalArray;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
 import com.mygdx.game.classes.SoundItem;
@@ -16,7 +17,7 @@ import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.LevelResult;
 import com.mygdx.game.util.SoundBase;
 
-public class GameScreen implements Screen {
+public class GameScreen extends InputAdapter implements Screen  {
 
     private static final String TAG = GameScreen.class.getName();
 
@@ -25,6 +26,7 @@ public class GameScreen implements Screen {
     private ArtGame game;
     private  SpriteBatch batch ;
     private GameScreenHud hud;
+    InputAdapter InputAdapter;
 
     // параметры уровня
     ArtGame artGame;
@@ -44,8 +46,9 @@ public class GameScreen implements Screen {
     int currentAttempt;
     float gameTime;
     float stageTime;
-    float delayTime;
+    float preloadTime;
     float attemptTime;
+    float delayTime;
     private boolean isStart;
     private SoundItem currentSound; // играющий в данный момент звук
     boolean isEnd = false; // конец последовательности
@@ -60,7 +63,7 @@ public class GameScreen implements Screen {
 
     // положения пушек
     Vector2[] cannonsCoord;
-    Cannon[]  cannons;
+    DelayedRemovalArray<Cannon> cannons;
 
     // положение позиций
     Vector2[] positionCoord;
@@ -90,13 +93,15 @@ public class GameScreen implements Screen {
 		height = Gdx.graphics.getHeight();
         hud = new GameScreenHud(width,height);
 		cannonsCoord = new Vector2[numSounds];
-		cannons      = new Cannon[numSounds];
+		cannons      = new DelayedRemovalArray<Cannon>(false,numSounds);
 		positionCoord = new Vector2[numAttempts];
 		getInitialCoordinates();
 		getSounds();
         sequence =new SoundSequence(soundsSequence, numAttempts);
 
         isStart = false;
+
+        Gdx.input.setInputProcessor(this);
 	}
 
 	private void getSounds () {
@@ -128,7 +133,7 @@ public class GameScreen implements Screen {
 
         // определяем пушки
         for (int i = 0; i < numSounds ; i++) {
-            cannons[i] = new Cannon(this,cannonsCoord[i], usedSounds[i]);
+            cannons.add(new Cannon(this,cannonsCoord[i], usedSounds[i]));
         }
 
         sequence.playSound(0);
@@ -140,56 +145,52 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 1, 0.6f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // fixed time step
-        // max frame time to avoid spiral of death (on slow devices)
-        float frameTime = Math.min(delta, 0.25f);
-        accumulator += frameTime;
+        preloadTime += delta;
 
-        batch.begin();
+        if(preloadTime > Constants.STAGE_PRELOAD_TIME) {
+            // fixed time step
+            // max frame time to avoid spiral of death (on slow devices)
+            float frameTime = Math.min(delta, 0.25f);
+            accumulator += frameTime;
 
-        for (int i = 0; i < numSounds; i++) {
-            cannons[i].render(batch,delta);
-        }
+            batch.begin();
 
-        float fps = 1 / delta;
-        Gdx.app.log(TAG,"fps =" + fps);
-
-        drawSoundSource();
-        drawHint();
-
-        if (!isEnd) {
-            update(delta);
-        } else {
-            float x = width  / 2 - 120;
-            float y = height /2 - 40 ;
-            if (lives > 0) {
-                sequence.result.setWin(true);
-            } else {
-                sequence.result.setWin(false);
+            for (int i = 0; i < numSounds; i++) {
+                cannons.get(i).render(batch, delta);
             }
 
-            artGame.setEndLevelScreen();
-//            resultFont.draw(batch,"End of sounds ", x,y);
+            float fps = 1 / delta;
+            Gdx.app.log(TAG, "fps =" + fps);
+
+            drawSoundSource();
+            drawHint();
+
+            if (!isEnd) {
+                update(delta);
+            } else {
+                float x = width / 2 - 120;
+                float y = height / 2 - 40;
+                if (lives > 0) {
+                    sequence.result.setWin(true);
+                } else {
+                    sequence.result.setWin(false);
+                }
+                artGame.setEndLevelScreen(getLevelResult());
+            }
+            hud.render(batch, delta, durationOfAttempt - attemptTime, lives, scores,
+                    sequence.getCurrentSound().getNumber(), currentAttempt + 1, onPause, clickResult);
+
+            batch.end();
         }
-
-        hud.render(batch, delta,durationOfAttempt-attemptTime,lives,scores,
-                sequence.getCurrentSound().getNumber(),currentAttempt + 1,onPause, clickResult);
-//        hud.render(batch);
-
-        batch.end();
     }
 
     private void drawSoundSource() {
 	    float xSource = cannonsCoord[numSounds-1].x + (width - cannonsCoord[numSounds-1].x) / 2 ;
-//        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getName(),
-//                xSource,Constants.CANNON_DOWN_MARGIN + Constants.SOURCE_SIZE_Y/2);
     }
 
     private void drawHint() {
         float x = width  / 2 - 120;
         float y = height /2 ;
-//        hudFont.draw(batch,"sound " + sequence.getCurrentSound().getNumber()+ "  " + "attempt" + (currentAttempt + 1),
-//                x,y);
     }
 
     public void update (float dt) {
@@ -205,35 +206,10 @@ public class GameScreen implements Screen {
                 if (attemptTime < durationOfAttempt ) {
                     attemptTime += dt;
                 } else {
+                    sequence.answerFalse(currentAttempt);
                     goToNextAttempt();
                 }
             }
-
-            Gdx.input.setInputProcessor(new InputAdapter() {
-                public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                    clickedCannon = checkClickEvent(screenX, screenY);
-                    if (clickedCannon != null && !onPause) {
-                        onPause = true;
-                        if (clickedCannon.getSound() == sequence.getCurrentSound()) {
-                            clickResult = true;
-                            sequence.answerCorrect(currentAttempt);
-                            Gdx.app.log("check click", "true");
-                            scores++;
-//                            goToNextAttempt();
-                        } else {
-                            clickResult = false;
-                            lives--;
-//                            goToNextAttempt();
-                            sequence.answerFalse(currentAttempt);
-                            Gdx.app.log("check click", "false");
-                        }
-                    } else if (onPause) {
-
-                        goToNextAttempt();
-                    }
-                    return false;
-                }
-            });
 
             if (clickedCannon != null) {
                 float x = width / 2 - 120;
@@ -241,6 +217,30 @@ public class GameScreen implements Screen {
 //            resultFont.draw(batch, " " + clickResult, x, y);
             }
         }
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        clickedCannon = checkClickEvent(screenX, screenY);
+        if (clickedCannon != null && !onPause) {
+            onPause = true;
+            if (clickedCannon.getSound() == sequence.getCurrentSound()) {
+                clickResult = true;
+                sequence.answerCorrect(currentAttempt);
+                Gdx.app.log("check click", "true");
+                scores++;
+//                            goToNextAttempt();
+            } else {
+                clickResult = false;
+                lives--;
+//                            goToNextAttempt();
+                sequence.answerFalse(currentAttempt);
+                Gdx.app.log("check click", "false");
+            }
+        } else if (onPause) {
+            goToNextAttempt();
+        }
+        return false;
     }
 
     private void goToNextAttempt() {
@@ -259,9 +259,9 @@ public class GameScreen implements Screen {
 
     private Cannon checkClickEvent(int screenX, int screenY) {
         Cannon clickPosition = null;
-        for (int i = 0; i < cannons.length ; i++) {
-            if(cannons[i].getHitBox().contains(screenX,height - screenY)) {
-                clickPosition = cannons[i];
+        for (int i = 0; i < cannons.size ; i++) {
+            if(cannons.get(i).getHitBox().contains(screenX,height - screenY)) {
+                clickPosition = cannons.get(i);
                 break;
             }
         }
@@ -271,16 +271,18 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose () {
 		batch.dispose();
-//        hudFont.dispose();
-//        resultFont.dispose();
-        //soundInterval.dispose();
-	}
+		hud.dispose();
+        for (int i = 0; i < cannons.size ; i++) {
+            cannons.removeIndex(i);
+        }
+
+    }
 
     @Override
     public void hide() {
-        batch.dispose();
-//        hudFont.dispose();
-//        resultFont.dispose();
+//        batch.dispose();
+//        hud.dispose();
+        dispose();
     }
 
     @Override

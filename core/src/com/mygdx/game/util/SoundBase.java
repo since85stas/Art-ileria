@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.classes.SoundItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SoundBase {
@@ -16,9 +19,7 @@ public class SoundBase {
     //      звуки для игры
     private List<SoundItem> gameSounds = new ArrayList<SoundItem>();
 
-    public SoundItem[] getGameSounds() {
-        return gameSounds.toArray( new SoundItem[gameSounds.size()]);
-    }
+
 
 
     public boolean generateSoundsBase() {
@@ -65,6 +66,31 @@ public class SoundBase {
             }
         }
         return sounds;
+    }
+
+    public SoundItem[] getGameSounds() {
+        getGameSoundsSorted();
+        return gameSounds.toArray( new SoundItem[gameSounds.size()]);
+    }
+
+    public SoundItem[] getGameSoundsSorted() {
+//        List<SoundItem> soundsSort = new ArrayList<SoundItem>(gameSounds.size());
+        List<SoundItem> soundsSort = Arrays.asList(new SoundItem[gameSounds.size()]);
+        Collections.copy(soundsSort,gameSounds);
+//        SoundItem[] sounds = gameSounds.toArray( new SoundItem[gameSounds.size()]);
+//        gameSounds.sort(new Comparator<SoundItem>() {
+        Collections.sort(soundsSort, new Comparator<SoundItem>() {
+            @Override
+            public int compare(SoundItem soundItem, SoundItem t1) {
+                if(soundItem.getNumber() > t1.getNumber())
+                    return 1;
+                else if(soundItem.getNumber() < t1.getNumber())
+                    return -1;
+                else
+                    return 0;
+            }
+        });
+        return soundsSort.toArray( new SoundItem[gameSounds.size()]);
     }
 
     private SoundItem getSoundItemFromNumber(int number) {
