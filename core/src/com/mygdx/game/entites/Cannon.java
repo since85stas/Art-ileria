@@ -43,7 +43,7 @@ public class Cannon extends ClickListener {
         this.gameScreen = gameScreen;
         width = (Gdx.graphics.getWidth()-2*Constants.CANNON_LATERAL_MARGIN-Constants.SOURCE_SIZE_X)/
                 gameScreen.getNumSounds();
-        height = width;
+        height = Gdx.graphics.getHeight()*Constants.CONTROLS_HEIGHT_RATIO;
         texture        = new Texture("asteroid64.png");
         hitBox = new Rectangle(position.x,position.y,width,height);
         // шрифт для подписей
@@ -71,7 +71,7 @@ public class Cannon extends ClickListener {
         float titleWidth = layout.width;
         if (cannonFont != null) {
             cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y +
-            Constants.HUD_MARGIN);
+            Constants.HUD_MARGIN_DOWN_RATIO*height);
         }
     }
 

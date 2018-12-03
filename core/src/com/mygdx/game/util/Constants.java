@@ -7,8 +7,10 @@ public class Constants {
     }
 
     // константы игрового экрана
-    public static final float HUD_FONT_REFERENCE_SCREEN_SIZE = 240.0f;
-    public static final float HUD_MARGIN   = 30.f;
+    public static final float HUD_MARGIN_UP_RATIO   = 0.02f;
+    public static final float HUD_MARGIN_DOWN_RATIO   = 0.02f;
+    public static final float CONTROLS_HEIGHT_RATIO  = 0.2f;
+    public static final float HUD_UP_SIZE  = 0.08f;
     public static final float HUD_MAIN_TEXT = 0.04f;
     public static final float HUD_BIG_TEXT = 0.1f;
 
@@ -40,8 +42,8 @@ public class Constants {
     public static final float BLINKING_PERIOD = 2.f;
 
     // константы для анимации Enemy
-    public static final float ENEMY_SIZE  = 0.05f ;
-    public static final float ENEMY_X_POSIT = 50.f;
+    public static final float ENEMY_SIZE  = 0.1f ;
+    public static final float ENEMY_X_POSIT = 0.1f;
     public static final float ENEMY_Y_POSIT = 50.f;
     public static final float  WALK_LOOP_DURATION = 0.025f;
 }

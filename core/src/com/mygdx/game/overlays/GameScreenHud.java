@@ -42,10 +42,10 @@ public class GameScreenHud {
         //resultFont.draw(batch,"End of sounds ", Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 
         // рисуем hud
-        float xHud = Constants.HUD_MARGIN;
-        float yHud = height-Constants.HUD_MARGIN;
+        float xHud = Constants.HUD_MARGIN_UP_RATIO*width;
+        float yHud = height-Constants.HUD_UP_SIZE*height;
         hudFont.draw(batch,"time  " + String.format("%.2f", attemptTime),
-                Constants.HUD_MARGIN,yHud);
+                xHud,yHud);
         xHud = width/2;
         hudFont.draw(batch,"lives " + lives,xHud,yHud);
         xHud += 150;
@@ -54,7 +54,7 @@ public class GameScreenHud {
         String text = "sound " + soundNumber+ "  " + "attempt " + attemptNumber;
         layout.setText(hudFont,text);
         float layWidth = layout.width;
-        float y = height / 2 + Constants.HUD_MARGIN;
+        float y = height / 2 + Constants.HUD_MARGIN_UP_RATIO*height;
         hudFont.draw(batch,text,(width - layWidth)/2, y);
         if (onPause) {
             text = "" + clickedResult;
@@ -85,7 +85,8 @@ public class GameScreenHud {
                 new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
                 new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = (int)(height*Constants.HUD_MAIN_TEXT);
+        parameter.size = (int)(height - (height*(1-Constants.HUD_UP_SIZE) +
+                Constants.HUD_MARGIN_UP_RATIO*height) );
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
         parameter.shadowOffsetX = 3;
