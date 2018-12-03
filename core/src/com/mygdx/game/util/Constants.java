@@ -38,4 +38,10 @@ public class Constants {
 
     // константы для текста
     public static final float BLINKING_PERIOD = 2.f;
+
+    // константы для анимации Enemy
+    public static final float ENEMY_SIZE  = 0.05f ;
+    public static final float ENEMY_X_POSIT = 50.f;
+    public static final float ENEMY_Y_POSIT = 50.f;
+    public static final float  WALK_LOOP_DURATION = 0.025f;
 }

@@ -15,7 +15,7 @@ public class ArtGame extends Game {
 	int[] soundSequence ;
 	float durationOfGame = 20.f;
 	float durationOfAttempt = 3.f;
-	int   numAttempts        = 2;
+	int   numAttempts        = 1;
 	int   lives           = 5;
 
 	@Override

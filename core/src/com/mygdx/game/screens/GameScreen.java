@@ -3,6 +3,7 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -11,8 +12,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
 import com.mygdx.game.classes.SoundItem;
 import com.mygdx.game.entites.Cannon;
+import com.mygdx.game.entites.Enemy;
 import com.mygdx.game.entites.SoundSequence;
 import com.mygdx.game.overlays.GameScreenHud;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.LevelResult;
 import com.mygdx.game.util.SoundBase;
@@ -54,6 +57,7 @@ public class GameScreen extends InputAdapter implements Screen  {
     boolean isEnd = false; // конец последовательности
     boolean onPause = false ; //стоим на паузе выводим результата
     private Cannon clickedCannon; // выбранная пушка
+    private Enemy  enemy;
 
     boolean clickResult ;
 
@@ -89,11 +93,14 @@ public class GameScreen extends InputAdapter implements Screen  {
 		this.durationOfAttempt = durationOfAttempt;
 		this.numAttempts = numAttempts;
 		this.lives      = lives;
+		AssetManager am = new AssetManager();
+		Assets.instance.init(am);
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
         hud = new GameScreenHud(width,height);
 		cannonsCoord = new Vector2[numSounds];
 		cannons      = new DelayedRemovalArray<Cannon>(false,numSounds);
+		enemy = new Enemy(this);
 		positionCoord = new Vector2[numAttempts];
 		getInitialCoordinates();
 		getSounds();
@@ -179,6 +186,8 @@ public class GameScreen extends InputAdapter implements Screen  {
             }
             hud.render(batch, delta, durationOfAttempt - attemptTime, lives, scores,
                     sequence.getCurrentSound().getNumber(), currentAttempt + 1, onPause, clickResult);
+
+            enemy.render(batch,delta);
 
             batch.end();
         }
@@ -275,7 +284,7 @@ public class GameScreen extends InputAdapter implements Screen  {
         for (int i = 0; i < cannons.size ; i++) {
             cannons.removeIndex(i);
         }
-
+        Assets.instance.dispose();
     }
 
     @Override
