@@ -39,7 +39,7 @@ public class EndLevelHud {
         resultFont =generateResultFont();
         blinkFont =  generateHudFont();
 
-        results = levelResult.generateOutStrings();
+        results = levelResult.generateUniqueOutStrings();
         Gdx.app.log("endHud", "test");
     }
 

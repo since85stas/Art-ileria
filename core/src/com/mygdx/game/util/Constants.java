@@ -31,7 +31,7 @@ public class Constants {
 
 
     // константы для игры
-    public static final float STAGE_DELAY_TIME = 0.5f;
+    public static final float STAGE_DELAY_TIME = 1.f;
     public static final float STAGE_PRELOAD_TIME = 2f;
 
     //константы для текстур пушек
@@ -42,7 +42,7 @@ public class Constants {
     public static final float BLINKING_PERIOD = 2.f;
 
     // константы для анимации Enemy
-    public static final float ENEMY_SIZE  = 0.1f ;
+    public static final float ENEMY_SIZE  = 0.12f ;
     public static final float ENEMY_X_POSIT = 0.1f;
     public static final float ENEMY_Y_POSIT = 50.f;
     public static final float  WALK_LOOP_DURATION = 0.025f;

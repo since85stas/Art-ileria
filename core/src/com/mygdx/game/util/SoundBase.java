@@ -13,19 +13,22 @@ public class SoundBase {
 
     final int filesNumber = 10;
 
+
     public SoundBase() {
     }
 
     //      звуки для игры
     private List<SoundItem> gameSounds = new ArrayList<SoundItem>();
+    int[] usedSounds;
 
-    public boolean generateSoundsBase() {
+    public boolean generateSoundsBase( int[] usedSounds) {
+        this.usedSounds = usedSounds;
         boolean result = false;
         String[] fileNames = getFileNames();
         String[] soundNames = getSoundNames();
 
         if ((fileNames.length == soundNames.length) &&(fileNames.length == filesNumber)) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < usedSounds.length; i++) {
                 SoundItem soundItem = new SoundItem(soundNames[i],fileNames[i],i);
                 gameSounds.add(soundItem);
             }
@@ -49,13 +52,13 @@ public class SoundBase {
         return soundNames;
     }
 
-    public SoundItem[] getGameSoundSequence(int[] soundsNumbers ) {
+    public SoundItem[] getGameSoundSequence(int[] soundsSequence ) {
 
-        boolean valid = checkNumbersForValid(soundsNumbers);
-        SoundItem[] sounds = new SoundItem[soundsNumbers.length];
+        boolean valid = checkNumbersForValid(soundsSequence);
+        SoundItem[] sounds = new SoundItem[soundsSequence.length];
         if(valid) {
-            for (int i = 0; i < soundsNumbers.length; i++) {
-                SoundItem sound = getSoundItemFromNumber(soundsNumbers[i]);
+            for (int i = 0; i < soundsSequence.length; i++) {
+                SoundItem sound = getSoundItemFromNumber(soundsSequence[i]);
                 if (sound != null) {
                     sounds[i] = sound;
                 } else {
@@ -66,15 +69,20 @@ public class SoundBase {
         return sounds;
     }
 
+    public SoundItem[] getLevelSounds() {
+        SoundItem[] soundItems = getGameSoundsSorted(gameSounds);
+        return soundItems;
+    }
+
     public SoundItem[] getGameSounds() {
-        getGameSoundsSorted();
+//        getGameSoundsSorted();
         return gameSounds.toArray( new SoundItem[gameSounds.size()]);
     }
 
-    public SoundItem[] getGameSoundsSorted() {
+    public SoundItem[] getGameSoundsSorted( List<SoundItem> sounds) {
 //        List<SoundItem> soundsSort = new ArrayList<SoundItem>(gameSounds.size());
-        List<SoundItem> soundsSort = Arrays.asList(new SoundItem[gameSounds.size()]);
-        Collections.copy(soundsSort,gameSounds);
+        List<SoundItem> soundsSort = Arrays.asList(new SoundItem[sounds.size()]);
+        Collections.copy(soundsSort,sounds);
 //        SoundItem[] sounds = gameSounds.toArray( new SoundItem[gameSounds.size()]);
 //        gameSounds.sort(new Comparator<SoundItem>() {
         Collections.sort(soundsSort, new Comparator<SoundItem>() {
@@ -88,7 +96,7 @@ public class SoundBase {
                     return 0;
             }
         });
-        return soundsSort.toArray( new SoundItem[gameSounds.size()]);
+        return soundsSort.toArray( new SoundItem[sounds.size()]);
     }
 
     private SoundItem getSoundItemFromNumber(int number) {
@@ -105,7 +113,6 @@ public class SoundBase {
                 return false;
             }
         }
-
         return valid;
     }
 }

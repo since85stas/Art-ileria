@@ -9,9 +9,9 @@ public class SoundSequence {
     private int i;  // текущий номер звука
     public LevelResult result;
 
-    public SoundSequence (SoundItem[] sounds, int numAttempts) {
+    public SoundSequence (SoundItem[] sounds, SoundItem[] usedSounds, int numAttempts) {
         this.sounds = sounds;
-        result = new LevelResult(sounds.length,numAttempts,sounds);
+        result = new LevelResult(sounds.length,numAttempts,sounds, usedSounds);
     }
 
     public void playSound (int i) {
@@ -55,5 +55,7 @@ public class SoundSequence {
         return sounds.length;
     }
 
-
+    public int getI() {
+        return i;
+    }
 }

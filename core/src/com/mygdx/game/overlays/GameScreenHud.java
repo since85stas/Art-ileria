@@ -38,20 +38,23 @@ public class GameScreenHud {
         blinkFont =  generateHudFont();
     }
     public void render (Batch batch, float dt,float attemptTime,int lives, int scores, int soundNumber,
+                        String soundName,
                         int attemptNumber, boolean onPause, boolean clickedResult) {
         //resultFont.draw(batch,"End of sounds ", Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 
         // рисуем hud
         float xHud = Constants.HUD_MARGIN_UP_RATIO*width;
-        float yHud = height-Constants.HUD_UP_SIZE*height;
-        hudFont.draw(batch,"time  " + String.format("%.2f", attemptTime),
-                xHud,yHud);
+        float yHud = height - Constants.HUD_MAIN_TEXT*height  ;
+        if (onPause) {
+            hudFont.draw(batch, "time  " + String.format("%.2f", attemptTime),
+                    xHud, yHud);
+        }
         xHud = width/2;
         hudFont.draw(batch,"lives " + lives,xHud,yHud);
         xHud += 150;
         hudFont.draw(batch,"scores " + scores,xHud,yHud);
 
-        String text = "sound " + soundNumber+ "  " + "attempt " + attemptNumber;
+        String text = "sound " + soundNumber+ "  " + soundName  + " attempt " + attemptNumber;
         layout.setText(hudFont,text);
         float layWidth = layout.width;
         float y = height / 2 + Constants.HUD_MARGIN_UP_RATIO*height;
@@ -63,12 +66,13 @@ public class GameScreenHud {
             y -= height*Constants.HUD_MAIN_TEXT*2 ;
             resultFont.draw(batch,text,(width - layWidth)/2, y);
 
-            text = "clicked to continue";
+            text = "Attention";
             layout.setText(blinkFont,text);
             layWidth = layout.width;
             y -= height*Constants.HUD_MAIN_TEXT*2 ;
             pauseTime += dt;
-            blinkFont.setColor(1, 1, 1, 0.5f + 0.5f * (float) Math.sin(pauseTime * Constants.BLINKING_PERIOD));
+            blinkFont.setColor(1, 1, 1, 0.5f + 0.5f *
+                    (float) Math.sin(pauseTime * Constants.BLINKING_PERIOD));
             blinkFont.draw(batch, text,(width - layWidth)/2,y);
         }
     }
@@ -85,8 +89,8 @@ public class GameScreenHud {
                 new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter =
                 new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = (int)(height - (height*(1-Constants.HUD_UP_SIZE) +
-                Constants.HUD_MARGIN_UP_RATIO*height) );
+        parameter.size = (int)(height - (height*(1-Constants.HUD_UP_SIZE)
+                + Constants.HUD_MARGIN_UP_RATIO*height) );
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
         parameter.shadowOffsetX = 3;

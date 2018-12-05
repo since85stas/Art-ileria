@@ -8,9 +8,10 @@ public class LevelResult {
     int correctAnsw;
     int mistakes;
     SoundItem[] sounds;
+    SoundItem[] usedSounds;
     int[][] answers;
 
-    public LevelResult (int numSounds, int numAttemps, SoundItem[] sounds) {
+    public LevelResult (int numSounds, int numAttemps, SoundItem[] sounds, SoundItem[] usedSounds) {
         answers = new int[numSounds][numAttemps];
         for (int i = 0; i < numSounds  ; i++) {
             for (int j = 0; j < numAttemps ; j++) {
@@ -18,6 +19,7 @@ public class LevelResult {
             }
         }
         this.sounds = sounds;
+        this.usedSounds = usedSounds;
     }
 
     private void initArray() {
@@ -54,6 +56,33 @@ public class LevelResult {
         }
 
         return strings;
+    }
+
+    public String[] generateUniqueOutStrings() {
+        String[] strings= new String[usedSounds.length];
+
+        for (int i = 0; i < strings.length; i++) {
+            int mistakes = 0;
+            int attempts = 0;
+            String soundName = usedSounds[i].getName();
+            for (int j = 0; j < sounds.length; j++) {
+                if(soundName == sounds[i].getName()) {
+                    attempts++;
+                    if (answers[j][0] == 0) {
+                        mistakes ++;
+                    }
+                }
+            }
+
+            String answersStr = getAnswerString(attempts,mistakes);
+            strings[i] = soundName + "  " + answersStr;
+        }
+        return strings;
+    }
+
+    private String getAnswerString (int attempts, int mistakes) {
+        String answer = "mistakes " + mistakes + " of " + attempts;
+        return answer;
     }
 
     private String getAnswers(int iSound) {

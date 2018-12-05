@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.mygdx.game.screens.EndLevelScreen;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.util.LevelResult;
@@ -11,10 +10,12 @@ import com.mygdx.game.util.LevelResult;
 public class ArtGame extends Game {
 
 	// временные параметры
-	int   numSounds    = 5;
+	int numSoundsUsed = 5;
+	int[] soundsUsed  = {0,1,2,3,4};
+	int   numSondsInSequence = 10;
 	int[] soundSequence ;
 	float durationOfGame = 20.f;
-	float durationOfAttempt = 3.f;
+	float durationOfAttempt = 2.f;
 	int   numAttempts        = 1;
 	int   lives           = 5;
 
@@ -25,8 +26,14 @@ public class ArtGame extends Game {
 
 	public void setGameScreen() {
 		generateSoundsSeq();
-		GameScreen gameScreen = new GameScreen(this, numSounds, soundSequence,
-				durationOfGame, durationOfAttempt, numAttempts, lives );
+		GameScreen gameScreen = new GameScreen(this,
+				numSoundsUsed,
+				soundsUsed,
+				soundSequence,
+				durationOfGame,
+				durationOfAttempt,
+				numAttempts,
+				lives );
 		setScreen(gameScreen);
 	}
 
@@ -36,9 +43,9 @@ public class ArtGame extends Game {
 	}
 
 	private void generateSoundsSeq() {
-		soundSequence = new int[numSounds];
-		for (int i = 0; i < soundSequence.length; i++) {
-			soundSequence[i] = MathUtils.random(0,soundSequence.length-1);
+		soundSequence = new int[numSondsInSequence];
+		for (int i = 0; i < numSondsInSequence -1 ; i++) {
+			soundSequence[i] = MathUtils.random( 0, numSoundsUsed -1 );
 		}
 	}
 

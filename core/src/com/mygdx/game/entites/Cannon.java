@@ -17,8 +17,9 @@ import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.util.Constants;
 
 public class Cannon extends ClickListener {
-
+    private boolean isBroken = false;
     private Texture texture;
+    private Texture explosTexture;
     private GameScreen gameScreen;
     private float width;
     private float height;
@@ -45,6 +46,7 @@ public class Cannon extends ClickListener {
                 gameScreen.getNumSounds();
         height = Gdx.graphics.getHeight()*Constants.CONTROLS_HEIGHT_RATIO;
         texture        = new Texture("asteroid64.png");
+        explosTexture  = new Texture("explosion-large.png");
         hitBox = new Rectangle(position.x,position.y,width,height);
         // шрифт для подписей
         generateFont12();
@@ -66,12 +68,15 @@ public class Cannon extends ClickListener {
     }
 
     public void  render(Batch batch, float dt) {
-        batch.draw(texture,position.x,position.y,width,height);
+        batch.draw(texture,position.x,0,width,height);
+        if (isBroken) {
+            batch.draw(explosTexture,position.x,0,width,height);
+        }
         String title = soundItem.getName();
         float titleWidth = layout.width;
         if (cannonFont != null) {
             cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y +
-            Constants.HUD_MARGIN_DOWN_RATIO*height);
+            Constants.HUD_MARGIN_DOWN_RATIO*height + Constants.TEXT_RATIO*height);
         }
     }
 
@@ -81,5 +86,13 @@ public class Cannon extends ClickListener {
 
     public SoundItem getSound() {
         return soundItem;
+    }
+
+    public void setBroken(boolean broken) {
+        isBroken = broken;
+    }
+
+    public boolean isBroken() {
+        return isBroken;
     }
 }
