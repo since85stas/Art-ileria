@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.screens.EndLevelScreen;
 import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.screens.PreGamScreen;
 import com.mygdx.game.util.LevelResult;
 
 public class ArtGame extends Game {
@@ -13,7 +14,7 @@ public class ArtGame extends Game {
 	int numSoundsUsed = 5;
 	int[] soundsUsed  = {0,1,2,3,4};
 	int   numSondsInSequence = 10;
-	int[] soundSequence ;
+	int[] soundSequence ={0,0,1,1,2,2,3,3,4,4};
 	float durationOfGame = 20.f;
 	float durationOfAttempt = 2.f;
 	int   numAttempts        = 1;
@@ -21,11 +22,15 @@ public class ArtGame extends Game {
 
 	@Override
 	public void create () {
-		setGameScreen();
+		setPreGame();
+	}
+
+	private void setPreGame() {
+		setScreen(new PreGamScreen());
 	}
 
 	public void setGameScreen() {
-		generateSoundsSeq();
+//		generateSoundsSeq();
 		GameScreen gameScreen = new GameScreen(this,
 				numSoundsUsed,
 				soundsUsed,
@@ -45,9 +50,11 @@ public class ArtGame extends Game {
 	private void generateSoundsSeq() {
 		soundSequence = new int[numSondsInSequence];
 		for (int i = 0; i < numSondsInSequence -1 ; i++) {
-			soundSequence[i] = MathUtils.random( 0, numSoundsUsed -1 );
+//			soundSequence[i] = MathUtils.random( 0, numSoundsUsed -1 );
+//			soundSequence = ;
 		}
 	}
+
 
 	@Override
 	public void render () {

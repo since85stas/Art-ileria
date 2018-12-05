@@ -66,7 +66,7 @@ public class LevelResult {
             int attempts = 0;
             String soundName = usedSounds[i].getName();
             for (int j = 0; j < sounds.length; j++) {
-                if(soundName == sounds[i].getName()) {
+                if(soundName == sounds[j].getName()) {
                     attempts++;
                     if (answers[j][0] == 0) {
                         mistakes ++;

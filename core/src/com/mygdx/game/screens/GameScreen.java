@@ -256,6 +256,7 @@ public class GameScreen extends InputAdapter implements Screen  {
                 clickedCannon.setBroken(true);
                 sequence.answerFalse(currentAttempt);
                 Gdx.app.log("check click", "false");
+                goToNextAttempt();
             }
         } else if (true) {
 //            goToNextAttempt();
@@ -277,8 +278,9 @@ public class GameScreen extends InputAdapter implements Screen  {
         } else {
             sequence.playCurrent();
         }
-
-        isEnd = checkEndGame();
+        if (!isEnd) {
+            isEnd = checkEndGame();
+        }
     }
 
     private Cannon checkClickEvent(int screenX, int screenY) {
