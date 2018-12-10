@@ -6,6 +6,16 @@ public class Constants {
 
     }
 
+    // константы для настроек
+    public static final String PREF_FILE_NAME = "levelPref";
+    public static final String PREF_NUM_SOUNDS = "numSounds";
+    public static final String PREF_SOUND_DURATIN = "durationSound";
+    public static final String PREF_BETWEEN_DELAY = "betweenDelay";
+
+    // константы для экрана предзагрузки
+    public static final float HUD_PRE_UP_RATIO   = 0.02f;
+    public static final float HUD_PRE_ITEM_SIZE   = 0.06f;
+
     // константы игрового экрана
     public static final float HUD_MARGIN_UP_RATIO   = 0.02f;
     public static final float HUD_MARGIN_DOWN_RATIO   = 0.02f;
@@ -16,6 +26,7 @@ public class Constants {
 
     // константы экрана вывода результатов
     public static final float END_HUD_MARGIN   = 40.f;
+
 
     // константы пушек
     public static final float CANNON_DOWN_MARGIN = 30.f;
@@ -31,8 +42,8 @@ public class Constants {
 
 
     // константы для игры
-    public static final float STAGE_DELAY_TIME = 1.f;
-    public static final float STAGE_PRELOAD_TIME = 2f;
+
+    public static final float STAGE_PRELOAD_TIME = 1f;
 
     //константы для текстур пушек
     public static final float CANNON_WIDTH = 64;

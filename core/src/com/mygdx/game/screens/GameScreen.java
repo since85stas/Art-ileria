@@ -2,6 +2,7 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,6 +31,7 @@ public class GameScreen extends InputAdapter implements Screen  {
     private  SpriteBatch batch ;
     private GameScreenHud hud;
     InputAdapter InputAdapter;
+    Preferences pref = Gdx.app.getPreferences(Constants.PREF_FILE_NAME);
 
     // параметры уровня
     ArtGame artGame;
@@ -41,8 +43,8 @@ public class GameScreen extends InputAdapter implements Screen  {
 //    int[] levelSequence;
     private float timeOfGame;
     private float durationOfAttempt;
+    private float delayDuration = pref.getFloat(Constants.PREF_BETWEEN_DELAY);
     private int lives;
-    private float stageDuration = 3;
     private SoundSequence sequence;
 
     // переменные уровня
@@ -53,7 +55,7 @@ public class GameScreen extends InputAdapter implements Screen  {
     float preloadTime;
     float attemptTime;
     float delayTime;
-    private boolean isStart;
+    private boolean isStart = false;
     private SoundItem currentSound; // играющий в данный момент звук
     boolean isEnd = false; // конец последовательности
     boolean onPause = false ; //стоим на паузе выводим результата
@@ -81,6 +83,7 @@ public class GameScreen extends InputAdapter implements Screen  {
     SoundBase soundBase;
 
     public GameScreen( ArtGame artGame,
+                       SoundBase soundBase,
                        int numSounds,
                        int[] usedSoundsInt,
                        int[] levelSequence,
@@ -90,6 +93,7 @@ public class GameScreen extends InputAdapter implements Screen  {
                        int lives){
         batch = new SpriteBatch();
         this.artGame = artGame;
+        this.soundBase = soundBase;
 		this.numSounds  = numSounds;
 		this.levelSequence = levelSequence;
 		this.timeOfGame = timeOfGame;
@@ -116,12 +120,10 @@ public class GameScreen extends InputAdapter implements Screen  {
 	}
 
 	private void getSounds (int[] sounds) {
-        soundBase = new SoundBase();
-        boolean result = soundBase.generateSoundsBase( sounds );
-        if (result) {
+//        soundBase = new SoundBase();
+//        boolean result = soundBase.generateSoundsBase( sounds );
             usedSounds = soundBase.getLevelSounds();
             soundsSequence = soundBase.getGameSoundSequence(levelSequence);
-        }
     }
 
     private void getInitialCoordinates() {
@@ -145,7 +147,7 @@ public class GameScreen extends InputAdapter implements Screen  {
         for (int i = 0; i < numSounds ; i++) {
             cannons.add(new Cannon(this,cannonsCoord[i], usedSounds[i]));
         }
-        sequence.playSound(0);
+
     }
 
     @Override
@@ -156,6 +158,10 @@ public class GameScreen extends InputAdapter implements Screen  {
 
         preloadTime += delta;
         if (preloadTime > Constants.STAGE_PRELOAD_TIME) {
+            if ( ! isStart) {
+                sequence.playSound(0);
+                isStart = true;
+            }
             // fixed time step
             // max frame time to avoid spiral of death (on slow devices)
             float frameTime = Math.min(delta, 0.25f);
@@ -212,7 +218,7 @@ public class GameScreen extends InputAdapter implements Screen  {
             // время игры
             gameTime += dt;
 
-            if (delayTime < Constants.STAGE_DELAY_TIME) {
+            if (delayTime < delayDuration) {
                 delayTime += dt;
                 clickedCannon = null;
             } else {

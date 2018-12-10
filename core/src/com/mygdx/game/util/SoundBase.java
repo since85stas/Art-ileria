@@ -115,4 +115,8 @@ public class SoundBase {
         }
         return valid;
     }
+
+    public int[] getUsedSounds() {
+        return usedSounds;
+    }
 }
