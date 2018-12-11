@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * Created by seeyo on 04.12.2018.
  */
 
-public class PreGamScreen extends InputAdapter implements Screen{
+public class PreGameScreen extends InputAdapter implements Screen{
 
     SpriteBatch batch;
     SoundBase soundBase;
@@ -42,7 +42,7 @@ public class PreGamScreen extends InputAdapter implements Screen{
     int widtht;
     int height;
 
-    public PreGamScreen (ArtGame game, SoundBase soundBase) {
+    public PreGameScreen(ArtGame game, SoundBase soundBase) {
         mGame = game;
         this.soundBase = soundBase;
         batch = new SpriteBatch();
@@ -114,7 +114,7 @@ public class PreGamScreen extends InputAdapter implements Screen{
         for (int i = 0; i < buttons.length; i++) {
             buttonY -= 2*height*Constants.HUD_PRE_ITEM_SIZE;
             buttons[i] = new TextButton(soundBase.getGameSounds()[i].getName(),mySkin);
-            buttons[i].setSize(80.f,40.f);
+            buttons[i].setSize(100.f,60.f);
             buttons[i].setPosition(buttonX,buttonY);
 
             buttons[i].addListener(new InputListener(){
@@ -141,7 +141,7 @@ public class PreGamScreen extends InputAdapter implements Screen{
 
         buttonY -= 2*height*Constants.HUD_PRE_ITEM_SIZE;
         Button startButton = new TextButton("Start level",mySkin);
-        startButton.setSize(120.f,40.f);
+        startButton.setSize(150.f,60.f);
         startButton.setPosition(buttonX,buttonY);
 
         startButton.addListener(new InputListener(){

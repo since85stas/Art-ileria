@@ -22,12 +22,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.LevelParameters;
 import com.mygdx.game.util.SoundBase;
 
 public class LevelSettingsScreen extends InputAdapter implements Screen {
+    private final static int BOX_SIZE = 60;
     private final static String[] soundsNum = {"2","3","4","5"};
     private final static String[] durNum = {"2","3","4","5","6","7"};
     private final static String[] delNum = {"1","1.5","2","2.5","3","3.5"};
+
 
     ArtGame game;
     SpriteBatch batch;
@@ -62,6 +65,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         widtht = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
         mySkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+//        mySkin.getFont()
         hudFont = generateHudFont();
 
         generateButtons();
@@ -93,7 +97,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         stage.draw();
 
         batch.begin();
-        float dx = 150;
+        float dx = 250;
         hudFont.draw(batch,"sounds",xNumSelet - dx,
                 yNumSelet + (height * Constants.HUD_MAIN_TEXT) );
         hudFont.draw(batch,"duration",xDurSelet - dx,
@@ -159,13 +163,18 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 
-                prefs.putInteger(Constants.PREF_NUM_SOUNDS,
-                        Integer.valueOf(soundsSelect.getSelected()));
-                prefs.putFloat(Constants.PREF_SOUND_DURATIN,
-                        Float.valueOf(durationSelect.getSelected()));
-                prefs.putFloat(Constants.PREF_BETWEEN_DELAY,
-                        Float.valueOf(delaySelect.getSelected()));
-                game.setPreGame();
+//                int num = Integer.valueOf(soundsSelect.getSelected());
+//                prefs.putInteger(Constants.PREF_NUM_SOUNDS,  num);
+//                float fl = Float.valueOf(durationSelect.getSelected());
+//                prefs.putFloat(Constants.PREF_SOUND_DURATIN,fl );
+//                fl = Float.valueOf(delaySelect.getSelected());
+//                prefs.putFloat(Constants.PREF_BETWEEN_DELAY,
+//                        fl);
+                LevelParameters parameters = new LevelParameters();
+                parameters.setNumSounds(Integer.valueOf(soundsSelect.getSelected()));
+                parameters.setSoundDuration(Float.valueOf(durationSelect.getSelected()));
+                parameters.setTimeDelay(Float.valueOf(delaySelect.getSelected()));
+                game.setPreGame(parameters);
 
                 return true;
             }
@@ -176,7 +185,10 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
 
     private void generateSoundsSelectBox(float x, float y) {
         soundsSelect = new SelectBox<String>(mySkin);
+        soundsSelect.setSize(BOX_SIZE,BOX_SIZE);
+//        soundsSelect.sest
         soundsSelect.setItems(soundsNum);
+        soundsSelect.setSelected("3");
         soundsSelect.setX(x);
         soundsSelect.setY(y);
 
@@ -194,7 +206,9 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
 
     private void generateDurationSelectBox(float x ,float y ) {
         durationSelect = new SelectBox<String>(mySkin);
+        durationSelect.setSize(BOX_SIZE,BOX_SIZE);
         durationSelect.setItems(durNum);
+        durationSelect.setSelected("1");
         durationSelect.setX(x);
         durationSelect.setY(y);
 
@@ -212,6 +226,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
 
     private void generateDelaySelectBox(float x ,float y ) {
         delaySelect = new SelectBox<String>(mySkin);
+        delaySelect.setSize(BOX_SIZE,BOX_SIZE);
         delaySelect.setItems(delNum);
         delaySelect.setSelected("1");
         delaySelect.setX(x);

@@ -42,8 +42,7 @@ public class Constants {
 
 
     // константы для игры
-
-    public static final float STAGE_PRELOAD_TIME = 1f;
+    public static final float STAGE_PRELOAD_TIME = 3f;
 
     //константы для текстур пушек
     public static final float CANNON_WIDTH = 64;

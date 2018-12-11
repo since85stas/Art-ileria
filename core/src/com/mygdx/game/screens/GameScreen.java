@@ -43,7 +43,7 @@ public class GameScreen extends InputAdapter implements Screen  {
 //    int[] levelSequence;
     private float timeOfGame;
     private float durationOfAttempt;
-    private float delayDuration = pref.getFloat(Constants.PREF_BETWEEN_DELAY);
+    private float delayDuration ;
     private int lives;
     private SoundSequence sequence;
 
@@ -89,6 +89,7 @@ public class GameScreen extends InputAdapter implements Screen  {
                        int[] levelSequence,
                        float timeOfGame,
                        float durationOfAttempt,
+                       float betweenDelay,
                        int numAttempts,
                        int lives){
         batch = new SpriteBatch();
@@ -98,6 +99,7 @@ public class GameScreen extends InputAdapter implements Screen  {
 		this.levelSequence = levelSequence;
 		this.timeOfGame = timeOfGame;
 		this.durationOfAttempt = durationOfAttempt;
+		delayDuration = betweenDelay;
 		this.numAttempts = numAttempts;
 		this.lives      = lives;
 //		this.usedSounds = usedSounds;
