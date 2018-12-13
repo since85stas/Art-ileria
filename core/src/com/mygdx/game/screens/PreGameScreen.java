@@ -163,8 +163,10 @@ public class PreGameScreen extends InputAdapter implements Screen{
 
     private BitmapFont generateHudFont() {
         BitmapFont font;
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        FreeTypeFontGenerator generator =
+                new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+                new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = (int)(height*Constants.HUD_MAIN_TEXT);
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;

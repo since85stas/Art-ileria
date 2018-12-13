@@ -224,6 +224,9 @@ public class GameScreen extends InputAdapter implements Screen  {
                 delayTime += dt;
                 clickedCannon = null;
             } else {
+                if (onDelay) {
+                    playSound();
+                }
                 onDelay = false;
                 enemy.render(batch,dt);
                 if ( attemptTime < durationOfAttempt ) {
@@ -276,19 +279,24 @@ public class GameScreen extends InputAdapter implements Screen  {
         enemy.setInitCoord();
         onPause = false;
         onDelay = true;
-        currentAttempt++;
+//        currentAttempt++;
         sequence.addTime(attemptTime);
         attemptTime = 0;
         delayTime   = 0;
+        if (!isEnd) {
+            isEnd = checkEndGame();
+        }
+    }
+
+    private void playSound() {
+        currentAttempt++;
         if (currentAttempt >= numAttempts || clickResult) {
             currentAttempt = 0;
             isEnd = !sequence.playNext();
         } else {
             sequence.playCurrent();
         }
-        if (!isEnd) {
-            isEnd = checkEndGame();
-        }
+
     }
 
     private Cannon checkClickEvent(int screenX, int screenY) {
