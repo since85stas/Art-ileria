@@ -8,6 +8,10 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.DelayedRemovalArray;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
@@ -27,20 +31,18 @@ public class GameScreen extends InputAdapter implements Screen  {
 
     private float accumulator = 0;
 
-    private ArtGame game;
     private  SpriteBatch batch ;
     private GameScreenHud hud;
-    InputAdapter InputAdapter;
-    Preferences pref = Gdx.app.getPreferences(Constants.PREF_FILE_NAME);
+    private Stage stage;
+    private Skin mySkin;
 
     // параметры уровня
-    ArtGame artGame;
+    private ArtGame artGame;
     private int numSounds;     // число возможных звуков
     private SoundItem[] usedSounds ; // число используемых звуков
     private int[] levelSequence; // номера звуков уровня
     private SoundItem[] soundsSequence;      // последовательность звуков уровня
     private int numAttempts;  // число попыток на каждый звук
-//    int[] levelSequence;
     private float timeOfGame;
     private float durationOfAttempt;
     private float delayDuration ;
@@ -82,6 +84,10 @@ public class GameScreen extends InputAdapter implements Screen  {
     // экземпляр со звуками уровня
     SoundBase soundBase;
 
+    // кнопки управления
+    Button greenButton;
+    Button redButton;
+
     public GameScreen( ArtGame artGame,
                        SoundBase soundBase,
                        int numSounds,
@@ -91,8 +97,10 @@ public class GameScreen extends InputAdapter implements Screen  {
                        float durationOfAttempt,
                        float betweenDelay,
                        int numAttempts,
-                       int lives){
+                       int lives)
+    {
         batch = new SpriteBatch();
+        stage = new Stage(new ScreenViewport());
         this.artGame = artGame;
         this.soundBase = soundBase;
 		this.numSounds  = numSounds;
@@ -119,6 +127,9 @@ public class GameScreen extends InputAdapter implements Screen  {
         isStart = false;
 
         Gdx.input.setInputProcessor(this);
+
+
+
 	}
 
 	private void getSounds (int[] sounds) {
@@ -129,11 +140,11 @@ public class GameScreen extends InputAdapter implements Screen  {
     }
 
     private void getInitialCoordinates() {
-	    cannonsCoord[0] = new Vector2(Constants.CANNON_LATERAL_MARGIN,0);
-	    float cannonsWidth = (width-2*Constants.CANNON_LATERAL_MARGIN - Constants.SOURCE_SIZE_X)/(numSounds+1);
+
+	    cannonsCoord[0] = new Vector2(Constants.SOURCE_BUTTONS_SIZE_X*width  ,0);
+	    float cannonsWidth = (width - 2*Constants.SOURCE_BUTTONS_SIZE_X )/(numSounds+1);
         for (int i = 1; i < numSounds ; i++) {
-            cannonsCoord[i] = new Vector2( cannonsCoord[0].x + cannonsWidth*i
-                    , 0);
+            cannonsCoord[i] = new Vector2( cannonsCoord[0].x + cannonsWidth*i, 0);
         }
         for (int i = 0; i < numAttempts; i++) {
             positionCoord[i] = new Vector2(width/2,height/ numAttempts *(i+1));
@@ -145,10 +156,31 @@ public class GameScreen extends InputAdapter implements Screen  {
         // Initialize the HUD viewport
         hudViewport = new ScreenViewport();
 
-        // определяем пушки
+        // определяем зеленую кнопку
+        mySkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        greenButton = new TextButton("Fire",mySkin);
+
+        float buttonSizeX = width*Constants.ACTUAL_BUTTONS_SIZE_X;
+        float buttonSzieY = buttonSizeX;
+        greenButton.setSize(buttonSizeX,buttonSzieY);
+        greenButton.setPosition((width*Constants.SOURCE_BUTTONS_SIZE_X-buttonSizeX)/2,
+                (width*Constants.SOURCE_BUTTONS_SIZE_X-buttonSzieY)/2);
+        stage.addActor(greenButton);
+
+        // initialize cannons
+        float cannonWidth = (width-2*Constants.SOURCE_BUTTONS_SIZE_X)/
+                numSounds;
+        float cannonHeight = height*Constants.CONTROLS_HEIGHT_RATIO;
         for (int i = 0; i < numSounds ; i++) {
-            cannons.add(new Cannon(this,cannonsCoord[i], usedSounds[i]));
+            cannons.add(new Cannon(cannonsCoord[i], cannonWidth,cannonHeight,usedSounds[i]));
         }
+
+        // определяем красную кнопку
+        mySkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        redButton = new TextButton("Listen",mySkin);
+        redButton.setPosition(cannonsCoord[numSounds-1].x + cannonWidth,0);
+        redButton.setSize(buttonSizeX,   buttonSzieY);
+        stage.addActor(redButton);
 
     }
 
@@ -160,6 +192,10 @@ public class GameScreen extends InputAdapter implements Screen  {
 
         preloadTime += delta;
         if (preloadTime > Constants.STAGE_PRELOAD_TIME) {
+
+            stage.act();
+            stage.draw();
+
             if ( ! isStart) {
                 sequence.playSound(0);
                 isStart = true;

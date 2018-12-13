@@ -18,14 +18,16 @@ import com.mygdx.game.util.Constants;
 
 public class Cannon extends ClickListener {
     private boolean isBroken = false;
+    private int charge;
+
     private Texture texture;
     private Texture explosTexture;
-    private GameScreen gameScreen;
+//    private GameScreen gameScreen;
     private float width;
     private float height;
     private Vector2 position;
     private SoundItem soundItem;
-    private ShapeRenderer renderer ;
+
     private Rectangle hitBox;
     GlyphLayout layout = new GlyphLayout();
 
@@ -36,18 +38,17 @@ public class Cannon extends ClickListener {
     BitmapFont cannonFont;
 
     // переменные управления
-    private int number;
 
-    public Cannon (GameScreen gameScreen, Vector2 position, SoundItem soundItem) {
+    public Cannon ( Vector2 position, float width, float height ,SoundItem soundItem) {
         this.position = position;
         this.soundItem = soundItem;
-        this.gameScreen = gameScreen;
-        width = (Gdx.graphics.getWidth()-2*Constants.CANNON_LATERAL_MARGIN-Constants.SOURCE_SIZE_X)/
-                gameScreen.getNumSounds();
-        height = Gdx.graphics.getHeight()*Constants.CONTROLS_HEIGHT_RATIO;
+        this.width = width;
+        this.height = height;
+
         texture        = new Texture("asteroid64.png");
         explosTexture  = new Texture("explosion-large.png");
         hitBox = new Rectangle(position.x,position.y,width,height);
+
         // шрифт для подписей
         generateFont12();
         layout.setText(cannonFont,soundItem.getName());

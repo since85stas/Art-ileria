@@ -19,7 +19,7 @@ public class ArtGame extends Game {
 	Preferences pref;
 
 	// временные параметры
-	int numSoundsUsed ;
+	int numSoundsUsed = 5;
 	int[] soundsUsed;
 	int   numSondsInSequence;
 	int[] soundSequence;
@@ -27,13 +27,17 @@ public class ArtGame extends Game {
 	float durationOfGame = 20.f;
 	float durationOfAttempt = 2.f;
 	float betweenDelay = 1f;
-	int   numAttempts        = 1;
-	int   lives           = 5;
-
+	int   numAttempts  = 1;
+	int   lives        = 5;
 
 	@Override
 	public void create () {
-		setSettScreen();
+		LevelParameters parameters = new LevelParameters();
+		parameters.setNumSounds(numSoundsUsed);
+		parameters.setSoundDuration(durationOfAttempt);
+		parameters.setTimeDelay(betweenDelay);
+
+		setPreGame(parameters);
 	}
 
 	public void setSettScreen() {

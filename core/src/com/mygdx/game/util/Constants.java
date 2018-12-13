@@ -33,9 +33,9 @@ public class Constants {
     public static final float CANNON_LATERAL_MARGIN = 20.f;
     public static final float TEXT_RATIO = 0.3f;
 
-    // константы источника
-    public static final float SOURCE_SIZE_X    = 40.f;
-    public static final float SOURCE_SIZE_Y    = 40.f;
+    // константы для кнопок управления
+    public static final float SOURCE_BUTTONS_SIZE_X = 0.1f;
+    public static final float ACTUAL_BUTTONS_SIZE_X = 0.08f;
 
     // ограничение на шаг по времени
     public static final float  TIME_STEP = 0.01f;
@@ -45,8 +45,6 @@ public class Constants {
     public static final float STAGE_PRELOAD_TIME = 3f;
 
     //константы для текстур пушек
-    public static final float CANNON_WIDTH = 64;
-    public static final float CANNON_HEIGHT = 64;
 
     // константы для текста
     public static final float BLINKING_PERIOD = 2.f;
@@ -56,4 +54,6 @@ public class Constants {
     public static final float ENEMY_X_POSIT = 0.1f;
     public static final float ENEMY_Y_POSIT = 50.f;
     public static final float  WALK_LOOP_DURATION = 0.025f;
+
+
 }
