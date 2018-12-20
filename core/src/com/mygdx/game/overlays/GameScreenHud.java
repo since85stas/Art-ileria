@@ -37,22 +37,27 @@ public class GameScreenHud {
         resultFont =generateResultFont();
         blinkFont =  generateHudFont();
     }
-    public void render (Batch batch, float dt,float attemptTime,int lives, int scores, int soundNumber,
+    public void render (Batch batch,
+                        float dt,
+                        float levelTime,
+                        int lives,
+                        int scores,
+                        int soundNumber,
                         String soundName,
-                        int attemptNumber, boolean onPause, boolean clickedResult) {
+                        int attemptNumber,
+                        boolean onPause,
+                        boolean clickedResult) {
         //resultFont.draw(batch,"End of sounds ", Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
 
         // рисуем hud
         float xHud = Constants.HUD_MARGIN_UP_RATIO*width;
         float yHud = height - Constants.HUD_MAIN_TEXT*height  ;
-        if (onPause) {
-            hudFont.draw(batch, "time  " + String.format("%.2f", attemptTime),
+            hudFont.draw(batch, "time  " + String.format("%.2f", levelTime),
                     xHud, yHud);
-        }
-        xHud = width/2;
-        hudFont.draw(batch,"lives " + lives,xHud,yHud);
-        xHud += 150;
-        hudFont.draw(batch,"scores " + scores,xHud,yHud);
+//        xHud = width/2;
+//        hudFont.draw(batch,"lives " + lives,xHud,yHud);
+//        xHud += 150;
+//        hudFont.draw(batch,"scores " + scores,xHud,yHud);
 
         String text = "sound " + soundNumber+ "  " + soundName  + " attempt " + attemptNumber;
         layout.setText(hudFont,text);

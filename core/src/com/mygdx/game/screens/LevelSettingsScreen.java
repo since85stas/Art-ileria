@@ -39,7 +39,6 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
     SelectBox<String> soundsSelect;
     SelectBox<String> durationSelect;
     SelectBox<String> delaySelect;
-    Preferences prefs = Gdx.app.getPreferences(Constants.PREF_FILE_NAME);
 
     private Stage stage;
     private Skin mySkin;

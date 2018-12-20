@@ -1,6 +1,7 @@
 package com.mygdx.game.entites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.screens.GameScreen;
@@ -30,8 +31,9 @@ public class Enemy  {
         height =Gdx.graphics.getHeight();
         this.gameScreen = gameScreen;
         setInitCoord();
+
         float distance = height *
-                ( 1 - Constants.HUD_UP_SIZE - Constants.CONTROLS_HEIGHT_RATIO - Constants.ENEMY_SIZE);
+                ( 1 - Constants.HUD_UP_SIZE - Constants.CANNONS_HEIGHT_RATIO - Constants.ENEMY_SIZE);
         velocity = distance/gameScreen.getDurationOfAttempt();
 //        this.y = height - height*(Constants.ENEMY_SIZE + Constants.HUD_UP_SIZE);
     }

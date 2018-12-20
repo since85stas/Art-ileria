@@ -25,15 +25,18 @@ public class Assets implements Disposable, AssetErrorListener {
     }
 
     public EnemyAssets enemyAssets;
+    public TargetAssets targetAssets;
 
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
         assetManager.load("sprite-animation4.png", Texture.class);
+        assetManager.load("ogachallenge6.png",Texture.class);
         assetManager.finishLoading();
         Texture walkTexture = assetManager.get("sprite-animation4.png");
-
+        Texture targetTexture = assetManager.get("ogachallenge6.png");
         enemyAssets = new EnemyAssets(walkTexture);
+        targetAssets = new TargetAssets(targetTexture);
     }
 
     @Override
@@ -69,6 +72,30 @@ public class Assets implements Disposable, AssetErrorListener {
                 }
             }
             walkAnimation = new Animation<TextureRegion>(Constants.WALK_LOOP_DURATION,walkFrames);
+            Gdx.app.log(TAG,"animation load");
+
+        }
+    }
+
+    public class TargetAssets {
+        private static final int FRAME_COLS = 3; // #1
+        private static final int FRAME_ROWS = 1; // #2
+        private static final int FRAME_ROWS_USED = 2;
+
+//        public final Animation<TextureRegion> walkAnimation;
+        public final TextureRegion targetTexture;
+        TextureRegion[] walkFrames; // #5
+        SpriteBatch spriteBatch; // #6
+        TextureRegion currentFrame; //
+
+        float stateTime;
+
+        public TargetAssets (Texture texture) {
+            TextureRegion[][] tmp = TextureRegion.split(texture,
+                    texture.getWidth()/FRAME_COLS,
+                    texture.getHeight()/FRAME_ROWS); // #10
+
+            targetTexture = tmp[2][0];
             Gdx.app.log(TAG,"animation load");
 
         }

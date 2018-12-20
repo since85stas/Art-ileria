@@ -19,7 +19,7 @@ public class Constants {
     // константы игрового экрана
     public static final float HUD_MARGIN_UP_RATIO   = 0.02f;
     public static final float HUD_MARGIN_DOWN_RATIO   = 0.02f;
-    public static final float CONTROLS_HEIGHT_RATIO  = 0.2f;
+
     public static final float HUD_UP_SIZE  = 0.08f;
     public static final float HUD_MAIN_TEXT = 0.04f;
     public static final float HUD_BIG_TEXT = 0.1f;
@@ -30,8 +30,12 @@ public class Constants {
 
     // константы пушек
     public static final float CANNON_DOWN_MARGIN = 30.f;
-    public static final float CANNON_LATERAL_MARGIN = 20.f;
+    public static final float CANNON_AIM_SIZE = 0.3f;
     public static final float TEXT_RATIO = 0.3f;
+    public static final float CANNONS_HEIGHT_RATIO = 0.2f;
+
+    // константы для целей
+    public static final float TARGETS_HEIGHT_RATIO = 0.2f;
 
     // константы для кнопок управления
     public static final float SOURCE_BUTTONS_SIZE_X = 0.1f;
@@ -39,7 +43,6 @@ public class Constants {
 
     // ограничение на шаг по времени
     public static final float  TIME_STEP = 0.01f;
-
 
     // константы для игры
     public static final float STAGE_PRELOAD_TIME = 3f;

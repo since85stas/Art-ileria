@@ -6,25 +6,30 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.classes.SoundItem;
-import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.util.Constants;
 
-public class Cannon extends ClickListener {
-    private boolean isBroken = false;
-    private int charge;
+import javax.xml.soap.Text;
 
-    private Texture texture;
+public class Cannon extends Actor {
+    private boolean isBroken = false;
+
+    // заряд пушки
+    private int charge = 0;
+
+    private Texture cannonTexture;
+    private TextureRegion aimTexture;
     private Texture explosTexture;
 //    private GameScreen gameScreen;
     private float width;
     private float height;
+    private int aimDistanceStep;
     private Vector2 position;
     private SoundItem soundItem;
 
@@ -45,13 +50,20 @@ public class Cannon extends ClickListener {
         this.width = width;
         this.height = height;
 
-        texture        = new Texture("asteroid64.png");
+        cannonTexture = new Texture("asteroid64.png");
+        Texture text = new Texture("crosshairs_strip6.png");
+        aimTexture = new TextureRegion(text,0,0,64,64);
         explosTexture  = new Texture("explosion-large.png");
         hitBox = new Rectangle(position.x,position.y,width,height);
 
         // шрифт для подписей
         generateFont12();
         layout.setText(cannonFont,soundItem.getName());
+
+        // определяем границы для нажатий
+        setWidth(width);
+        setHeight(height);
+        setBounds(position.x,position.y,width,height);
     }
 
     private void generateFont12() {
@@ -69,7 +81,12 @@ public class Cannon extends ClickListener {
     }
 
     public void  render(Batch batch, float dt) {
-        batch.draw(texture,position.x,0,width,height);
+        batch.draw(cannonTexture,position.x,0,width,height);
+        batch.draw(aimTexture,
+                position.x + width/2,
+                charge*aimDistanceStep + height/2,
+                width*Constants.CANNON_AIM_SIZE,
+                width*Constants.CANNON_AIM_SIZE);
         if (isBroken) {
             batch.draw(explosTexture,position.x,0,width,height);
         }
@@ -78,6 +95,25 @@ public class Cannon extends ClickListener {
         if (cannonFont != null) {
             cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y +
             Constants.HUD_MARGIN_DOWN_RATIO*height + Constants.TEXT_RATIO*height);
+            cannonFont.draw(batch,""+charge,position.x + width/2,position.y + height);
+        }
+    }
+
+    public void playSound() {
+        soundItem.playSound();
+    }
+
+    public void answerCorrect(int max) {
+        charge ++;
+        if (charge > max) {
+            charge = 0;
+        }
+    }
+
+    public void answerFalse() {
+        charge--;
+        if(charge<0) {
+            charge = 0;
         }
     }
 
@@ -95,5 +131,9 @@ public class Cannon extends ClickListener {
 
     public boolean isBroken() {
         return isBroken;
+    }
+
+    public void setDistance (int distance) {
+        aimDistanceStep = distance;
     }
 }

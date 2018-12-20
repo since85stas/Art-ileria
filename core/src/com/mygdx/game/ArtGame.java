@@ -9,7 +9,6 @@ import com.mygdx.game.screens.EndLevelScreen;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.screens.LevelSettingsScreen;
 import com.mygdx.game.screens.PreGameScreen;
-import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.LevelParameters;
 import com.mygdx.game.util.LevelResult;
 import com.mygdx.game.util.SoundBase;
@@ -25,9 +24,9 @@ public class ArtGame extends Game {
 	int[] soundSequence;
 //	int[] soundSequence ={0,0,1,1,2,2,3,3,4,4};
 	float durationOfGame = 20.f;
-	float durationOfAttempt = 2.f;
+	float durationOfAttempt = 3.f;
 	float betweenDelay = 1f;
-	int   numAttempts  = 1;
+	int targetDistance = 3;
 	int   lives        = 5;
 
 	@Override
@@ -36,7 +35,6 @@ public class ArtGame extends Game {
 		parameters.setNumSounds(numSoundsUsed);
 		parameters.setSoundDuration(durationOfAttempt);
 		parameters.setTimeDelay(betweenDelay);
-
 		setPreGame(parameters);
 	}
 
@@ -72,7 +70,7 @@ public class ArtGame extends Game {
 				durationOfGame,
 				durationOfAttempt,
 				betweenDelay,
-				numAttempts,
+				targetDistance,
 				lives );
 		setScreen(gameScreen);
 	}
