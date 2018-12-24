@@ -2,28 +2,23 @@ package com.mygdx.game.util;
 
 import com.mygdx.game.classes.SoundItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LevelResult {
     boolean isWin;
-    float levelTime;
-    int correctAnsw;
-    int mistakes;
-    SoundItem[] sounds;
+    float   levelTime;
+    int     correctAnsw;
+    int     mistakes;
+    List<SoundItem> sounds;
     SoundItem[] usedSounds;
-    int[][] answers;
+    List<Integer> answers;
 
-    public LevelResult (int numSounds, int numAttemps, SoundItem[] sounds, SoundItem[] usedSounds) {
-        answers = new int[numSounds][numAttemps];
-        for (int i = 0; i < numSounds  ; i++) {
-            for (int j = 0; j < numAttemps ; j++) {
-                answers[i][j] = -1;
-            }
-        }
-        this.sounds = sounds;
+    public LevelResult ( SoundItem[] usedSounds) {
+
         this.usedSounds = usedSounds;
-    }
-
-    private void initArray() {
-
+        sounds = new ArrayList<SoundItem>();
+        answers = new ArrayList<Integer>();
     }
 
     public void setWin(boolean win) {
@@ -38,11 +33,13 @@ public class LevelResult {
         levelTime++;
     }
 
-    public void setAnswer ( int iNum, int iAttemp, boolean result ) {
+    public void setAnswer ( boolean result, SoundItem soundItem ) {
         if (result){
-            answers[iNum][iAttemp] = 1;
+            answers.add(1);
+            sounds.add(soundItem);
         } else {
-            answers[iNum][iAttemp] = 0;
+            answers.add(0);
+            sounds.add(soundItem);
         }
     }
 
@@ -65,12 +62,12 @@ public class LevelResult {
             int mistakes = 0;
             int attempts = 0;
             String soundName = usedSounds[i].getName();
-            for (int j = 0; j < sounds.length; j++) {
-                if(soundName == sounds[j].getName()){
-                    if (answers[j][0] != -1) {
+            for (int j = 0; j < sounds.size(); j++) {
+                if(soundName == sounds.get(j).getName()){
+                    if (answers.get(j) != -1) {
                         attempts++;
                     }
-                    if (answers[j][0] == 0) {
+                    if (answers.get(j) == 0) {
                         mistakes ++;
                     }
                 }

@@ -14,11 +14,9 @@ import com.mygdx.game.util.Constants;
 public class CannonTarget {
 
     private boolean isBroken = false;
-
     private float width;
     private float height;
     private Vector2 position;
-
 
     public CannonTarget (Vector2 position, float width, float height) {
         this.position = position;
@@ -39,13 +37,21 @@ public class CannonTarget {
                 position.y,
                 width,
                 height);
-//        if (isBroken) {
-//            batch.draw(explosTexture,position.x,0,width,height);
-//        }
 
-//        if (cannonFont != null) {
-//            cannonFont.draw(batch, title, position.x + (width-titleWidth)/2, position.y +
-//                    Constants.HUD_MARGIN_DOWN_RATIO*height + Constants.TEXT_RATIO*height);
-//        }
+        if (isBroken) {
+            batch.draw(Assets.instance.brokenAssets.brokenTexture,
+                    position.x,
+                    position.y,
+                    width,
+                    height);
+        }
+    }
+
+    public boolean isBroken() {
+        return isBroken;
+    }
+
+    public void setBroken(boolean broken) {
+        isBroken = broken;
     }
 }

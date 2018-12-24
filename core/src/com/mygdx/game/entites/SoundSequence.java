@@ -11,7 +11,7 @@ public class SoundSequence {
 
     public SoundSequence (SoundItem[] sounds, SoundItem[] usedSounds, int numAttempts) {
         this.sounds = sounds;
-        result = new LevelResult(sounds.length,numAttempts,sounds, usedSounds);
+//        result = new LevelResult(sounds.length,numAttempts,sounds, usedSounds);
     }
 
     public void playSound (int i) {
@@ -35,13 +35,13 @@ public class SoundSequence {
     }
 
     // результаты уровня
-    public void answerCorrect (int iAttempt) {
-        result.setAnswer(i,iAttempt,true);
-    }
-
-    public void answerFalse(int iAttempt) {
-        result.setAnswer(i,iAttempt,false);
-    }
+//    public void answerCorrect (int iAttempt) {
+//        result.setAnswer(i,iAttempt,true);
+//    }
+//
+//    public void answerFalse(int iAttempt) {
+//        result.setAnswer(i,iAttempt,false);
+//    }
 
     public void addTime(float dt) {
         result.addTime(dt);

@@ -42,7 +42,6 @@ public class GameScreenHud {
                         float levelTime,
                         int lives,
                         int scores,
-                        int soundNumber,
                         String soundName,
                         int attemptNumber,
                         boolean onPause,
@@ -59,7 +58,7 @@ public class GameScreenHud {
 //        xHud += 150;
 //        hudFont.draw(batch,"scores " + scores,xHud,yHud);
 
-        String text = "sound " + soundNumber+ "  " + soundName  + " attempt " + attemptNumber;
+        String text = "sound "  + soundName;
         layout.setText(hudFont,text);
         float layWidth = layout.width;
         float y = height / 2 + Constants.HUD_MARGIN_UP_RATIO*height;

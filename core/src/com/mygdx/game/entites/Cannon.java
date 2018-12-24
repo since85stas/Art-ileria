@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.classes.SoundItem;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 
 import javax.xml.soap.Text;
@@ -24,12 +25,13 @@ public class Cannon extends Actor {
     private int charge = 0;
 
     private Texture cannonTexture;
-    private TextureRegion aimTexture;
+//    private TextureRegion aimTexture;
     private Texture explosTexture;
 //    private GameScreen gameScreen;
     private float width;
     private float height;
-    private int aimDistanceStep;
+    private int aimDistanceStep; // шаг расстояния до цели в пикселях
+    private int aimDistance;  // расстояние до цели
     private Vector2 position;
     private SoundItem soundItem;
 
@@ -51,8 +53,8 @@ public class Cannon extends Actor {
         this.height = height;
 
         cannonTexture = new Texture("asteroid64.png");
-        Texture text = new Texture("crosshairs_strip6.png");
-        aimTexture = new TextureRegion(text,0,0,64,64);
+//        Texture text = new Texture("crosshairs_strip6.png");
+//        aimTexture = new TextureRegion(text,0,0,64,64);
         explosTexture  = new Texture("explosion-large.png");
         hitBox = new Rectangle(position.x,position.y,width,height);
 
@@ -82,7 +84,7 @@ public class Cannon extends Actor {
 
     public void  render(Batch batch, float dt) {
         batch.draw(cannonTexture,position.x,0,width,height);
-        batch.draw(aimTexture,
+        batch.draw(Assets.instance.crosshairAssets.getAimTexture(charge != aimDistance),
                 position.x + width/2,
                 charge*aimDistanceStep + height/2,
                 width*Constants.CANNON_AIM_SIZE,
@@ -133,7 +135,19 @@ public class Cannon extends Actor {
         return isBroken;
     }
 
-    public void setDistance (int distance) {
+    public void setDistanceStep(int distance) {
         aimDistanceStep = distance;
+    }
+
+    public void setDistance(int distance) {
+        aimDistance = distance;
+    }
+
+    public int getCharge() {
+        return charge;
+    }
+
+    public void nullCharge() {
+        charge = 0;
     }
 }

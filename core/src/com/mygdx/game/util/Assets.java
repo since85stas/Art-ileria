@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 
+import javax.xml.soap.Text;
+
 /**
  * Created by seeyo on 03.12.2018.
  */
@@ -26,17 +28,25 @@ public class Assets implements Disposable, AssetErrorListener {
 
     public EnemyAssets enemyAssets;
     public TargetAssets targetAssets;
+    public BrokenAssets brokenAssets;
+    public CrosshairAssets crosshairAssets;
 
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
         assetManager.load("sprite-animation4.png", Texture.class);
         assetManager.load("ogachallenge6.png",Texture.class);
+        assetManager.load("explosion-large.png",Texture.class);
+        assetManager.load("crosshairs_strip6.png",Texture.class);
         assetManager.finishLoading();
         Texture walkTexture = assetManager.get("sprite-animation4.png");
         Texture targetTexture = assetManager.get("ogachallenge6.png");
+        Texture brokenTexture = assetManager.get("explosion-large.png");
+        Texture crossTexture = assetManager.get("crosshairs_strip6.png");
         enemyAssets = new EnemyAssets(walkTexture);
         targetAssets = new TargetAssets(targetTexture);
+        brokenAssets = new BrokenAssets(brokenTexture);
+        crosshairAssets = new CrosshairAssets(crossTexture);
     }
 
     @Override
@@ -84,9 +94,6 @@ public class Assets implements Disposable, AssetErrorListener {
 
 //        public final Animation<TextureRegion> walkAnimation;
         public final TextureRegion targetTexture;
-        TextureRegion[] walkFrames; // #5
-        SpriteBatch spriteBatch; // #6
-        TextureRegion currentFrame; //
 
         float stateTime;
 
@@ -95,9 +102,53 @@ public class Assets implements Disposable, AssetErrorListener {
                     texture.getWidth()/FRAME_COLS,
                     texture.getHeight()/FRAME_ROWS); // #10
 
-            targetTexture = tmp[2][0];
+            targetTexture = tmp[0][0];
             Gdx.app.log(TAG,"animation load");
-
         }
     }
+
+    public class BrokenAssets {
+
+        //        public final Animation<TextureRegion> walkAnimation;
+        public final Texture brokenTexture;
+        TextureRegion[] walkFrames; // #5
+        SpriteBatch spriteBatch; // #6
+        TextureRegion currentFrame; //
+
+        public BrokenAssets (Texture texture) {
+            brokenTexture = texture;
+
+            Gdx.app.log(TAG,"animation load");
+        }
+    }
+
+    public class CrosshairAssets {
+        private static final int FRAME_COLS = 6; // #1
+        private static final int FRAME_ROWS = 1; // #2
+
+        //        public final Animation<TextureRegion> walkAnimation;
+        public final TextureRegion targetTextureNormal;
+        public final TextureRegion targetTextureGoal;
+
+
+        public CrosshairAssets (Texture texture) {
+            TextureRegion[][] tmp = TextureRegion.split(texture,
+                    texture.getWidth()/FRAME_COLS,
+                    texture.getHeight()/FRAME_ROWS); // #10
+
+            targetTextureNormal = tmp[0][0];
+            targetTextureGoal   = tmp[0][5];
+            Gdx.app.log(TAG,"animation load");
+        }
+
+        public TextureRegion getAimTexture(boolean aim) {
+            if (aim) {
+                return targetTextureNormal;
+            } else {
+                return targetTextureGoal;
+            }
+        }
+    }
+
+
 }

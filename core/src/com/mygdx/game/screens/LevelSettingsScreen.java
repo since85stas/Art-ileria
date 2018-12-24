@@ -3,7 +3,6 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,13 +22,13 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArtGame;
 import com.mygdx.game.util.Constants;
 import com.mygdx.game.util.LevelParameters;
-import com.mygdx.game.util.SoundBase;
 
 public class LevelSettingsScreen extends InputAdapter implements Screen {
     private final static int BOX_SIZE = 60;
-    private final static String[] soundsNum = {"2","3","4","5"};
+    private final static String[] soundsNum = {"2","3","4","5","6","7","8","9"};
     private final static String[] durNum = {"2","3","4","5","6","7"};
-    private final static String[] delNum = {"1","1.5","2","2.5","3","3.5"};
+    private final static String[] linesNum = {"1","2","3"};
+    private final static String[] gameTime = {"60","120","180","240","300"};
 
 
     ArtGame game;
@@ -39,6 +38,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
     SelectBox<String> soundsSelect;
     SelectBox<String> durationSelect;
     SelectBox<String> delaySelect;
+    SelectBox<String> timeSelect;
 
     private Stage stage;
     private Skin mySkin;
@@ -51,6 +51,8 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
     float yDurSelet;
     float xDelSelet;
     float yDelSelet;
+    float xTimeSelet;
+    float yTimeSelet;
 
     public LevelSettingsScreen(ArtGame game) {
         this.game = game;
@@ -78,7 +80,11 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
 
         xDelSelet = xDurSelet;
         yDelSelet = yDurSelet - height * Constants.HUD_MAIN_TEXT*3;
-        generateDelaySelectBox(xDelSelet,yDelSelet);
+        generateLinesSelectBox(xDelSelet,yDelSelet);
+
+        xTimeSelet = xDelSelet;
+        yTimeSelet = yDelSelet - height * Constants.HUD_MAIN_TEXT*3;
+        generateTimeSelectBox(xTimeSelet,yTimeSelet);
 
 //        generateButtons(soundBase.getUsedSounds());
 //        ;       usedSoundsItems = soundBase.getLevelSounds();
@@ -101,8 +107,10 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
                 yNumSelet + (height * Constants.HUD_MAIN_TEXT) );
         hudFont.draw(batch,"duration",xDurSelet - dx,
                 yDurSelet + (height * Constants.HUD_MAIN_TEXT) );
-        hudFont.draw(batch,"delay",xDelSelet - dx,
+        hudFont.draw(batch,"lines",xDelSelet - dx,
                 yDelSelet + (height * Constants.HUD_MAIN_TEXT) );
+        hudFont.draw(batch,"time",xTimeSelet - dx,
+                yTimeSelet + (height * Constants.HUD_MAIN_TEXT) );
         batch.end();
     }
 
@@ -172,8 +180,9 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
                 LevelParameters parameters = new LevelParameters();
                 parameters.setNumSounds(Integer.valueOf(soundsSelect.getSelected()));
                 parameters.setSoundDuration(Float.valueOf(durationSelect.getSelected()));
-                parameters.setTimeDelay(Float.valueOf(delaySelect.getSelected()));
-                game.setPreGame(parameters);
+                parameters.setNumLines(Integer.valueOf(delaySelect.getSelected()));
+                parameters.setGameTime(Integer.valueOf(timeSelect.getSelected()));
+                game.setGameScreen(parameters);
 
                 return true;
             }
@@ -187,7 +196,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         soundsSelect.setSize(BOX_SIZE,BOX_SIZE);
 //        soundsSelect.sest
         soundsSelect.setItems(soundsNum);
-        soundsSelect.setSelected("3");
+        soundsSelect.setSelected("5");
         soundsSelect.setX(x);
         soundsSelect.setY(y);
 
@@ -207,7 +216,7 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         durationSelect = new SelectBox<String>(mySkin);
         durationSelect.setSize(BOX_SIZE,BOX_SIZE);
         durationSelect.setItems(durNum);
-        durationSelect.setSelected("1");
+        durationSelect.setSelected("5");
         durationSelect.setX(x);
         durationSelect.setY(y);
 
@@ -223,11 +232,11 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         stage.addActor(actor);
     }
 
-    private void generateDelaySelectBox(float x ,float y ) {
+    private void generateLinesSelectBox(float x , float y ) {
         delaySelect = new SelectBox<String>(mySkin);
         delaySelect.setSize(BOX_SIZE,BOX_SIZE);
-        delaySelect.setItems(delNum);
-        delaySelect.setSelected("1");
+        delaySelect.setItems(linesNum);
+        delaySelect.setSelected("2");
         delaySelect.setX(x);
         delaySelect.setY(y);
 
@@ -240,6 +249,26 @@ public class LevelSettingsScreen extends InputAdapter implements Screen {
         });
         Actor actor = delaySelect;
         actor.setName("delaySelect");
+        stage.addActor(actor);
+    }
+
+    private void generateTimeSelectBox(float x , float y ) {
+        timeSelect = new SelectBox<String>(mySkin);
+        timeSelect.setSize(BOX_SIZE,BOX_SIZE);
+        timeSelect.setItems(gameTime);
+        timeSelect.setSelected("60");
+        timeSelect.setX(x);
+        timeSelect.setY(y);
+
+        timeSelect.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.log("sett","select");
+                String str = timeSelect.getSelected();
+            }
+        });
+        Actor actor = timeSelect;
+        actor.setName("timeSelect");
         stage.addActor(actor);
     }
 

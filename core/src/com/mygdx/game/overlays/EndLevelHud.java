@@ -32,7 +32,6 @@ public class EndLevelHud {
         //this.viewport = new ExtendViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         this.width = width;
         this.height = height;
-//        this.levelResult = levelResult;
 
         // шрифт для заголовка
         hudFont = generateHudFont();

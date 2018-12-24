@@ -7,7 +7,9 @@ package com.mygdx.game.util;
 public class LevelParameters {
     private int numSounds;
     private float soundDuration;
-    private float timeDelay;
+    private int numLines;
+
+    private int gameTime;
 
     public int getNumSounds() {
         return numSounds;
@@ -17,8 +19,8 @@ public class LevelParameters {
         return soundDuration;
     }
 
-    public float getTimeDelay() {
-        return timeDelay;
+    public int getNumLines() {
+        return numLines;
     }
 
     public void setNumSounds(int numSounds) {
@@ -29,7 +31,15 @@ public class LevelParameters {
         this.soundDuration = soundDuration;
     }
 
-    public void setTimeDelay(float timeDelay) {
-        this.timeDelay = timeDelay;
+    public void setNumLines(int timeDelay) {
+        this.numLines = timeDelay;
+    }
+
+    public int getGameTime() {
+        return gameTime;
+    }
+
+    public void setGameTime(int gameTime) {
+        this.gameTime = gameTime;
     }
 }

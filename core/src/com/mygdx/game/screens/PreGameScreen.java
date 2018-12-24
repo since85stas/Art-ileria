@@ -57,7 +57,7 @@ public class PreGameScreen extends InputAdapter implements Screen{
         mySkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         hudFont = generateHudFont();
         generateButtons(soundBase.getUsedSounds());
-;       usedSoundsItems = soundBase.getLevelSounds();
+        usedSoundsItems = soundBase.getLevelSounds();
     }
 
     @Override
@@ -149,7 +149,7 @@ public class PreGameScreen extends InputAdapter implements Screen{
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 //                outputLabel.setText("Pressed Text Button");
                 Gdx.app.log("PreScreen","Pressed");
-                mGame.setGameScreen();
+//                mGame.setGameScreen();
                 return true;
             }
         });

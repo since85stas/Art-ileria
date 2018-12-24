@@ -31,11 +31,12 @@ public class ArtGame extends Game {
 
 	@Override
 	public void create () {
-		LevelParameters parameters = new LevelParameters();
-		parameters.setNumSounds(numSoundsUsed);
-		parameters.setSoundDuration(durationOfAttempt);
-		parameters.setTimeDelay(betweenDelay);
-		setPreGame(parameters);
+//		LevelParameters parameters = new LevelParameters();
+//		parameters.setNumSounds(numSoundsUsed);
+//		parameters.setSoundDuration(durationOfAttempt);
+//		parameters.setNumLines(betweenDelay);
+//		setPreGame(parameters);
+		setSettScreen();
 	}
 
 	public void setSettScreen() {
@@ -46,7 +47,7 @@ public class ArtGame extends Game {
 
 		soundBase = new SoundBase();
 		numSoundsUsed = parameters.getNumSounds();
-		numSondsInSequence = numSoundsUsed*2;
+//		numSondsInSequence = numSoundsUsed*2;
 		soundsUsed = new int[numSoundsUsed];
 		for (int i = 0; i < soundsUsed.length ; i++) {
 			soundsUsed[i] = i;
@@ -57,11 +58,27 @@ public class ArtGame extends Game {
 		}
 
 		durationOfAttempt = parameters.getSoundDuration();
-		betweenDelay  = parameters.getTimeDelay();
+		betweenDelay  = parameters.getNumLines();
 	}
 
-	public void setGameScreen() {
-		generateSoundsSeq();
+	public void setGameScreen(LevelParameters parameters) {
+//		generateSoundsSeq();
+		soundBase = new SoundBase();
+		numSoundsUsed = parameters.getNumSounds();
+
+		soundsUsed = new int[numSoundsUsed];
+		for (int i = 0; i < soundsUsed.length ; i++) {
+			soundsUsed[i] = i;
+		}
+		boolean result = soundBase.generateSoundsBase( soundsUsed );
+		if (result) {
+			setScreen(new PreGameScreen(this, soundBase));
+		}
+
+		durationOfAttempt = parameters.getSoundDuration();
+		targetDistance  = parameters.getNumLines();
+		durationOfGame = parameters.getGameTime();
+
 		GameScreen gameScreen = new GameScreen(this,
 				soundBase,
 				numSoundsUsed,
