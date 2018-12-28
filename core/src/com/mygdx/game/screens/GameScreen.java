@@ -47,7 +47,7 @@ public class GameScreen extends InputAdapter implements Screen {
     private int distanceToTarget;   // расстояние до целей
     private float timeOfGame;
     private float durationOfAttempt;
-    private float delayDuration = 1;
+    private float delayDuration = 0;
     private int lives;
 //    private SoundSequence sequence;
 
@@ -59,7 +59,9 @@ public class GameScreen extends InputAdapter implements Screen {
     float preloadTime;
     float attemptTime;
     float delayTime;
-    private boolean isStart = false; // указатель начала раунда
+    private boolean isStart = false; // указатель начала уровня
+    private boolean isAttemptStart = false; // указатель начала попытки
+    private boolean isButtonPressed = false; // нажали на зеленую кнопку
     private SoundItem currentSound; // играющий в данный момент звук
     boolean isEnd = false; // конец последовательности
     boolean onPause = false; //стоим на паузе выводим результата
@@ -68,7 +70,7 @@ public class GameScreen extends InputAdapter implements Screen {
     float cannonsWidth;  // размер пушки
     private Enemy enemy;
 
-    boolean clickResult;
+    boolean attemptResult; // результат последней попытки
 
     // screen dimensions
     private int width;
@@ -132,15 +134,14 @@ public class GameScreen extends InputAdapter implements Screen {
 //        sequence = new SoundSequence(soundsSequence, usedSounds, distanceToTarget);
         levelResult = new LevelResult(usedSounds);
 
-        isStart = false;
+        isAttemptStart = false;
 
         Gdx.input.setInputProcessor(stage);
 
     }
 
     private void getSounds(int[] sounds) {
-//        soundBase = new SoundBase();
-//        boolean result = soundBase.generateSoundsBase( sounds );
+
         usedSounds = soundBase.getLevelSounds();
 //        soundsSequence = soundBase.getGameSoundSequence(levelSequence);
     }
@@ -156,8 +157,6 @@ public class GameScreen extends InputAdapter implements Screen {
         for (int i = 0; i < distanceToTarget; i++) {
             positionCoord[i] = new Vector2(width / 2, height / distanceToTarget * (i + 1));
         }
-
-
     }
 
     @Override
@@ -193,23 +192,30 @@ public class GameScreen extends InputAdapter implements Screen {
                     cannonsWidth,
                     cannonHeight,
                     usedSounds[i]);
-            cannon.setDistanceStep(aimDistanceStep);
-            cannon.setDistance(distanceToTarget);
-            cannon.addListener(new InputListener() {
+            cannon.setDistanceStep (aimDistanceStep);
+            cannon.setDistance (distanceToTarget)   ;
+            cannon.addListener (new InputListener() {
                                    @Override
                                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                                        Gdx.app.log("Can", "stage");
-                                       if (isStart) {
-                                           if (cannon.getSound().equals(currentSound)) {
-                                               cannon.playSound();
-                                               cannon.answerCorrect(distanceToTarget);
-                                               levelResult.setAnswer(true,currentSound);
-                                               goToNextAttempt();
-                                           } else {
-                                               cannon.playSound();
-                                               cannon.answerFalse();
-                                               goToNextAttempt();
-                                               levelResult.setAnswer(false,currentSound);
+                                       if (isAttemptStart) {
+                                           if (isButtonPressed) {
+                                               if (cannon.getSound().equals(currentSound)) {
+                                                   cannon.playSound();
+                                                   cannon.answerCorrect(distanceToTarget);
+                                                   levelResult.setAnswer(true, currentSound);
+                                                   attemptResult = true;
+                                                   endCurrentAttempt();
+                                                   checkEndGame();
+                                               } else {
+                                                   cannon.playSound();
+//                                                   cannon.answerFalse();
+                                                   checkEndAttemptTime();
+                                                   endCurrentAttempt();
+                                                   levelResult.setAnswer(false, currentSound);
+                                                   attemptResult = false;
+                                                   checkEndGame();
+                                               }
                                            }
                                        } else {
                                            cannon.playSound();
@@ -249,7 +255,14 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     private void pressGreenBut() {
-        goToNextAttempt();
+        if (!isStart) {
+            isStart = true;
+        }
+        if(!isButtonPressed) {
+            isButtonPressed = true;
+            isAttemptStart = true;
+            goToNextAttempt();
+        }
     }
 
     private void pressRedBut() {
@@ -259,6 +272,7 @@ public class GameScreen extends InputAdapter implements Screen {
             }
             cannons.get(i).nullCharge();
         }
+        isEnd = checkEndGame();
     }
 
     @Override
@@ -300,15 +314,17 @@ public class GameScreen extends InputAdapter implements Screen {
             } else {
                 string = currentSound.getName();
             }
+            boolean drawHint = true;
             hud.render (batch,
                     delta,
                     timeOfGame - gameTime,
                     lives,
                     scores,
+                    drawHint,
                     string,
                     currentAttempt + 1,
-                    onDelay,
-                    clickResult);
+                    !isButtonPressed,
+                    attemptResult);
             batch.end();
         }
     }
@@ -324,14 +340,16 @@ public class GameScreen extends InputAdapter implements Screen {
             if (delayTime < delayDuration) {
                 delayTime += dt;
             } else {
-                if (isStart) {
+                if (isAttemptStart) {
                     enemy.render(batch, dt);
                     if (attemptTime < durationOfAttempt) {
                         attemptTime += dt;
                     } else {
-                        isStart = false;
                         checkEndAttemptTime();
-                        goToNextAttempt();
+                        endCurrentAttempt();
+                        attemptResult = false;
+                        checkEndGame();
+//                        goToNextAttempt();
                     }
                 }
             }
@@ -347,29 +365,24 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     private void goToNextAttempt() {
-        enemy.setInitCoord();
-        onPause = false;
 
-//        sequence.addTime(attemptTime);
-        attemptTime = 0;
-        delayTime = 0;
-        if (!isEnd) {
-            isEnd = checkEndGame();
-        }
-        isStart = true;
+
+//        isAttemptStart = false;
         currentSound = usedSounds[MathUtils.random(0, numSounds - 1)];
         currentSound.playSound();
     }
 
-//    private void playSound() {
-//        currentAttempt++;
-//        if (currentAttempt >= distanceToTarget || clickResult) {
-//            currentAttempt = 0;
-//            isEnd = !sequence.playNext();
-//        } else {
-//            sequence.playCurrent();
-//        }
-//    }
+    private void endCurrentAttempt() {
+        if (!isEnd) {
+            isEnd = checkEndGame();
+        }
+        enemy.setInitCoord();
+        onPause = false;
+        isAttemptStart = false;
+        isButtonPressed = false;
+        attemptTime = 0;
+        delayTime = 0;
+    }
 
     private Cannon checkClickEvent(int screenX, int screenY) {
         Cannon clickPosition = null;

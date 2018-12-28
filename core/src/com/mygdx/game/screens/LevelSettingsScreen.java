@@ -26,7 +26,7 @@ import com.mygdx.game.util.LevelParameters;
 public class LevelSettingsScreen extends InputAdapter implements Screen {
     private final static int BOX_SIZE = 60;
     private final static String[] soundsNum = {"2","3","4","5","6","7","8","9"};
-    private final static String[] durNum = {"2","3","4","5","6","7"};
+    private final static String[] durNum = {"4","5","6","7","300"};
     private final static String[] linesNum = {"1","2","3"};
     private final static String[] gameTime = {"60","120","180","240","300"};
 

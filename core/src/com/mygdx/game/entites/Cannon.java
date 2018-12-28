@@ -108,7 +108,7 @@ public class Cannon extends Actor {
     public void answerCorrect(int max) {
         charge ++;
         if (charge > max) {
-            charge = 0;
+            charge = max;
         }
     }
 

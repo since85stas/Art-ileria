@@ -42,6 +42,7 @@ public class GameScreenHud {
                         float levelTime,
                         int lives,
                         int scores,
+                        boolean drawSoundName,
                         String soundName,
                         int attemptNumber,
                         boolean onPause,
@@ -62,21 +63,24 @@ public class GameScreenHud {
         layout.setText(hudFont,text);
         float layWidth = layout.width;
         float y = height / 2 + Constants.HUD_MARGIN_UP_RATIO*height;
-        hudFont.draw(batch,text,(width - layWidth)/2, y);
+        if (drawSoundName) {
+            hudFont.draw(batch,text,(width - layWidth)/2, y);
+        }
         if (onPause) {
             text = "" + clickedResult;
             layout.setText(resultFont,text);
             layWidth = layout.width;
             y -= height*Constants.HUD_MAIN_TEXT*2 ;
             resultFont.draw(batch,text,(width - layWidth)/2, y);
-
-            text = "Attention";
+        } else {
+            text = "select sound";
             layout.setText(blinkFont,text);
             layWidth = layout.width;
             y -= height*Constants.HUD_MAIN_TEXT*2 ;
             pauseTime += dt;
             blinkFont.setColor(1, 1, 1, 0.5f + 0.5f *
                     (float) Math.sin(pauseTime * Constants.BLINKING_PERIOD));
+
             blinkFont.draw(batch, text,(width - layWidth)/2,y);
         }
     }

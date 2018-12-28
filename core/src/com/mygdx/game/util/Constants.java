@@ -38,8 +38,8 @@ public class Constants {
     public static final float TARGETS_HEIGHT_RATIO = 0.2f;
 
     // константы для кнопок управления
-    public static final float SOURCE_BUTTONS_SIZE_X = 0.1f;
-    public static final float ACTUAL_BUTTONS_SIZE_X = 0.08f;
+    public static final float SOURCE_BUTTONS_SIZE_X = 0.15f;
+    public static final float ACTUAL_BUTTONS_SIZE_X = 0.12f;
 
     // ограничение на шаг по времени
     public static final float  TIME_STEP = 0.01f;
